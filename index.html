@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMO Dashboard — Портфель проектов и продуктов</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Chart.js для KPI-диаграммы -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Прогресс-бар загрузки -->
+  <div id="loader" class="hidden"></div>
+
+  <!-- Сообщение об ошибке -->
+  <div id="error-banner" class="hidden"></div>
+
+  <!-- ─── Шапка ─────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-logo">
+      PMO Dashboard
+      <span>Портфель проектов и продуктов</span>
+    </div>
+
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="portfolio">📋 Портфель</button>
+      <button class="nav-tab" data-tab="gantt">📅 Гантт</button>
+      <button class="nav-tab" data-tab="risks">⚠️ Риски</button>
+    </nav>
+
+    <button id="btn-refresh" title="Обновить данные">↻ Обновить</button>
+  </header>
+
+  <!-- ─── Панель фильтров ────────────────────────────────────── -->
+  <div class="filters-bar">
+    <label>Тип:</label>
+    <select id="filter-type">
+      <option value="">Все типы</option>
+      <option value="Проект">Проект</option>
+      <option value="Продукт">Продукт</option>
+    </select>
+
+    <label>Ответственный:</label>
+    <select id="filter-owner">
+      <option value="">Все ответственные</option>
+    </select>
+
+    <label>Статус:</label>
+    <select id="filter-status">
+      <option value="">Все статусы</option>
+      <option value="🔴">🔴 Критично</option>
+      <option value="🟡">🟡 Под контролем</option>
+      <option value="🟢">🟢 В норме</option>
+    </select>
+  </div>
+
+  <!-- ─── Основной контент ───────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Экран: Портфель -->
+    <section id="screen-portfolio" class="screen">
+      <!-- KPI карточки -->
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-accent">
+          <div class="kpi-value" id="kpi-total">—</div>
+          <div class="kpi-label">Всего задач</div>
+        </div>
+        <div class="kpi-card kpi-red">
+          <div class="kpi-value" id="kpi-red">—</div>
+          <div class="kpi-label">🔴 Критично</div>
+        </div>
+        <div class="kpi-card kpi-yellow">
+          <div class="kpi-value" id="kpi-yellow">—</div>
+          <div class="kpi-label">🟡 Под контролем</div>
+        </div>
+        <div class="kpi-card kpi-green">
+          <div class="kpi-value" id="kpi-green">—</div>
+          <div class="kpi-label">🟢 В норме</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-projects">—</div>
+          <div class="kpi-label">Проектов</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-products">—</div>
+          <div class="kpi-label">Продуктов</div>
+        </div>
+      </div>
+
+      <!-- Диаграмма статусов -->
+      <div class="dashboard-bottom">
+        <div id="portfolio-container">
+          <p class="no-data">Загрузка данных…</p>
+        </div>
+        <div class="chart-card">
+          <h3>Распределение статусов</h3>
+          <div class="chart-wrapper">
+            <canvas id="status-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Экран: Гантт -->
+    <section id="screen-gantt" class="screen hidden">
+      <div id="gantt-container">
+        <p class="no-data">Загрузка данных…</p>
+      </div>
+    </section>
+
+    <!-- Экран: Риски и отклонения -->
+    <section id="screen-risks" class="screen hidden">
+      <div id="risks-container">
+        <p class="no-data">Загрузка данных…</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast-уведомление -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Скрипты (порядок важен: сначала api.js, потом gantt.js, потом app.js) -->
+  <script src="api.js"></script>
+  <script src="gantt.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
