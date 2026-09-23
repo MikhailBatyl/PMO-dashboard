@@ -62,7 +62,16 @@ function renderGantt(container, items) {
 
       subgroup.tasks.forEach(task => {
         const statusClass = statusToClass(task.status);
-        html += `<tr class="gantt-task-row ${statusClass}">
+
+        // Проверяем: есть ли факт в месяце, где плана нет → просрочка
+        const isOverdue = months.some(month => {
+          const tl = task.timeline[month] || { plan: false, fact: false };
+          return tl.fact && !tl.plan;
+        });
+
+        const rowClass = isOverdue ? 'gantt-task-row gantt-overdue' : `gantt-task-row ${statusClass}`;
+
+        html += `<tr class="${rowClass}">
           <td class="gantt-task-name gantt-task-indent">
             <span class="status-dot">${task.status}</span>
             ${escapeHtml(task.task)}

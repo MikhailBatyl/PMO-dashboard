@@ -126,7 +126,7 @@ function renderStatusChart(red, yellow, green) {
   statusChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['🔴 Критично', '🟡 Под контролем', '🟢 В норме'],
+      labels: ['🔴 Критично', '🟡 Контроль', '🟢 В норме'],
       datasets: [{
         data: [red, yellow, green],
         backgroundColor: ['#dc2626', '#d97706', '#16a34a'],
@@ -138,7 +138,16 @@ function renderStatusChart(red, yellow, green) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 12 }, color: '#64748b' } }
+        legend: {
+            position: 'bottom',
+            labels: {
+              font: { size: 12 },
+              color: '#64748b',
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 16
+            }
+          }
       }
     }
   });

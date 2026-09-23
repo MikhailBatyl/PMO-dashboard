@@ -164,6 +164,7 @@ body {
   grid-template-columns: 1fr 260px;
   gap: 20px;
   margin-bottom: 24px;
+  align-items: start;
 }
 
 .chart-card {
@@ -174,7 +175,7 @@ body {
 }
 
 .chart-card h3 { font-size: 13px; color: var(--color-text-muted); margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-.chart-wrapper { height: 200px; }
+.chart-wrapper { height: 180px; }
 
 /* ─── Таблица портфеля ───────────────────────────────────────────────────── */
 .portfolio-table {
@@ -344,6 +345,9 @@ body {
 .gantt-group-row.gantt-level2 { background: #f8fafc; color: var(--color-text-muted); }
 
 .gantt-task-row:hover { background: #f8fafc; }
+.gantt-overdue { background: rgba(220, 38, 38, 0.12) !important; }
+.gantt-overdue td { color: #991b1b; }
+.gantt-overdue .gantt-owner { color: #dc2626; }
 .gantt-task-indent { padding-left: 24px !important; }
 .gantt-task-name { min-width: 280px; }
 
