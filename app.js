@@ -233,7 +233,7 @@ function renderPortfolio() {
           <span class="toggle-icon">${isOpen ? '▼' : '▶'}</span>
           <span class="type-badge ${item.type === 'Проект' ? 'badge-project' : 'badge-product'}">${item.type}</span>
           <strong>${escHtml(item.name)}</strong>
-          ${item.businessNote ? `<span class="biz-note">${escHtml(item.businessNote)}</span>` : ''}
+          ${item.businessNote ? `<span class="biz-note">${item.businessNote.split(/\.\s+|\n/).filter(Boolean).map((s,i,a) => escHtml(s) + (i < a.length-1 ? '.' : '')).join('<br>')}</span>` : ''}
         </td>
       </tr>
     `;

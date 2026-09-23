@@ -36,7 +36,7 @@ function renderGantt(container, items) {
         <td class="gantt-task-name">
           <span class="gantt-type-badge ${item.type === 'Проект' ? 'badge-project' : 'badge-product'}">${item.type}</span>
           <strong>${escapeHtml(item.name)}</strong>
-          ${item.businessNote ? `<span class="gantt-biz-note">${escapeHtml(item.businessNote)}</span>` : ''}
+          ${item.businessNote ? `<span class="gantt-biz-note">${item.businessNote.split(/\.\s+|\n/).filter(Boolean).map((s,i,a) => escapeHtml(s) + (i < a.length-1 ? '.' : '')).join('<br>')}</span>` : ''}
         </td>
         ${months.map(() => `<td class="gantt-cell-month"></td>`).join('')}
       </tr>
