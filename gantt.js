@@ -23,14 +23,7 @@ function renderGantt(container, items) {
         <thead>
           <tr>
             <th class="gantt-task-col">Задача</th>
-            ${months.map(m => `<th class="gantt-month-col" colspan="2">${m}</th>`).join('')}
-          </tr>
-          <tr>
-            <th></th>
-            ${months.map(() => `
-              <th class="gantt-sub-col gantt-plan-header">П</th>
-              <th class="gantt-sub-col gantt-fact-header">Ф</th>
-            `).join('')}
+            ${months.map(m => `<th class="gantt-month-col">${m}</th>`).join('')}
           </tr>
         </thead>
         <tbody>
@@ -45,7 +38,7 @@ function renderGantt(container, items) {
           <strong>${escapeHtml(item.name)}</strong>
           ${item.businessNote ? `<span class="gantt-biz-note">${escapeHtml(item.businessNote)}</span>` : ''}
         </td>
-        ${months.map(() => `<td class="gantt-cell" colspan="2"></td>`).join('')}
+        ${months.map(() => `<td class="gantt-cell-month"></td>`).join('')}
       </tr>
     `;
 
@@ -55,7 +48,7 @@ function renderGantt(container, items) {
         html += `
           <tr class="gantt-group-row gantt-level2">
             <td class="gantt-task-name gantt-subgroup-name">— ${escapeHtml(subgroup.subgroupName)}</td>
-            ${months.map(() => `<td class="gantt-cell" colspan="2"></td>`).join('')}
+            ${months.map(() => `<td class="gantt-cell-month"></td>`).join('')}
           </tr>
         `;
       }
@@ -80,12 +73,14 @@ function renderGantt(container, items) {
 
         months.forEach(month => {
           const tl = task.timeline[month] || { plan: false, fact: false };
-          // Расхождение: план есть, факта нет
-          const deviationClass = (tl.plan && !tl.fact) ? 'gantt-cell-deviation' : '';
+          const planClass  = tl.plan ? 'gantt-strip-plan' : '';
+          const factClass  = tl.fact ? 'gantt-strip-fact' : (tl.plan ? 'gantt-strip-deviation' : '');
 
           html += `
-            <td class="gantt-cell ${tl.plan ? 'gantt-cell-plan' : ''}"></td>
-            <td class="gantt-cell ${tl.fact ? 'gantt-cell-fact' : deviationClass}"></td>
+            <td class="gantt-cell-month">
+              <div class="gantt-strip ${planClass}"></div>
+              <div class="gantt-strip ${factClass}"></div>
+            </td>
           `;
         });
 
