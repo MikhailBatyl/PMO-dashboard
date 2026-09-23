@@ -129,16 +129,16 @@ function renderStatusChart(red, yellow, green) {
       labels: ['🔴 Критично', '🟡 Под контролем', '🟢 В норме'],
       datasets: [{
         data: [red, yellow, green],
-        backgroundColor: ['#ef4444', '#f59e0b', '#22c55e'],
+        backgroundColor: ['#dc2626', '#d97706', '#16a34a'],
         borderWidth: 2,
-        borderColor: '#fff'
+        borderColor: '#ffffff'
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 13 } } }
+        legend: { position: 'bottom', labels: { font: { size: 12 }, color: '#64748b' } }
       }
     }
   });
