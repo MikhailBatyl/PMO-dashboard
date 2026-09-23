@@ -202,8 +202,6 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
-  position: sticky;
-  top: 103px;
 }
 
 .portfolio-table td {
