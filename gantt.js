@@ -80,18 +80,12 @@ function renderGantt(container, items) {
 
         months.forEach(month => {
           const tl = task.timeline[month] || { plan: false, fact: false };
-          const planClass = tl.plan ? 'gantt-filled gantt-plan' : '';
-          const factClass = tl.fact ? 'gantt-filled gantt-fact' : '';
-          // Подсветка расхождения: план есть, факта нет
-          const deviationClass = (tl.plan && !tl.fact) ? 'gantt-deviation' : '';
+          // Расхождение: план есть, факта нет
+          const deviationClass = (tl.plan && !tl.fact) ? 'gantt-cell-deviation' : '';
 
           html += `
-            <td class="gantt-cell gantt-plan-cell ${planClass}">
-              ${tl.plan ? '<span class="gantt-bar gantt-bar-plan"></span>' : ''}
-            </td>
-            <td class="gantt-cell gantt-fact-cell ${factClass} ${deviationClass}">
-              ${tl.fact ? '<span class="gantt-bar gantt-bar-fact"></span>' : (tl.plan ? '<span class="gantt-bar gantt-bar-missing" title="Факт не проставлен">!</span>' : '')}
-            </td>
+            <td class="gantt-cell ${tl.plan ? 'gantt-cell-plan' : ''}"></td>
+            <td class="gantt-cell ${tl.fact ? 'gantt-cell-fact' : deviationClass}"></td>
           `;
         });
 

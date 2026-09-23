@@ -124,11 +124,19 @@ function parseSheet(sheet) {
 
     // Уровень 1 — заголовок проекта/продукта
     if (type === 'Проект' || type === 'Продукт') {
+      // Описание читаем из колонки T (индекс 19); если пусто — ищем в последней непустой ячейке строки
+      var noteVal = String(row[19] || '').trim();
+      if (!noteVal) {
+        for (var ci = row.length - 1; ci >= 20; ci--) {
+          var cv = String(row[ci] || '').trim();
+          if (cv) { noteVal = cv; break; }
+        }
+      }
       currentItem = {
         id: transliterate(name),
         type: type,
         name: name,
-        businessNote: String(row[19] || '').trim(),
+        businessNote: noteVal,
         subgroups: []
       };
       currentSubgroup = { subgroupName: null, tasks: [] };
