@@ -126,7 +126,7 @@ function renderStatusChart(red, yellow, green) {
   statusChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['🔴 Критично', '🟡 Контроль', '🟢 В норме'],
+      labels: ['Критично', 'Контроль', 'В норме'],
       datasets: [{
         data: [red, yellow, green],
         backgroundColor: ['#dc2626', '#d97706', '#16a34a'],
