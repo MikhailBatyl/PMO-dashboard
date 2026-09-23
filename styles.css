@@ -336,8 +336,8 @@ body {
   font-weight: 600;
 }
 
-.gantt-task-col { text-align: left !important; min-width: 280px; position: sticky; left: 0; background: var(--color-surface) !important; z-index: 2; }
-.gantt-month-col { text-align: center; min-width: 70px; }
+.gantt-task-col { text-align: left !important; min-width: 200px; width: 200px; position: sticky; left: 0; background: var(--color-surface) !important; z-index: 2; }
+.gantt-month-col { text-align: center; min-width: 100px; }
 
 .gantt-group-row.gantt-level1 { background: var(--color-surface2); font-weight: 600; }
 .gantt-group-row.gantt-level2 { background: #f8fafc; color: var(--color-text-muted); }
@@ -347,21 +347,21 @@ body {
 .gantt-overdue td { color: #991b1b; }
 .gantt-overdue .gantt-owner { color: #dc2626; }
 .gantt-task-indent { padding-left: 24px !important; }
-.gantt-task-name { min-width: 280px; }
+.gantt-task-name { min-width: 200px; max-width: 200px; }
 
 .gantt-owner { color: var(--color-text-muted); font-size: 11px; margin-left: 6px; }
 .status-dot { margin-right: 4px; }
 
 .gantt-cell-month {
   padding: 0 !important;
-  width: 70px;
-  min-width: 70px;
+  width: 100px;
+  min-width: 100px;
   vertical-align: top;
   border: 1px solid var(--color-border);
 }
 
 .gantt-strip {
-  height: 13px;
+  height: 16px;
   width: 100%;
 }
 .gantt-strip + .gantt-strip {
