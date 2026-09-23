@@ -206,6 +206,7 @@ function renderPortfolio() {
   }
 
   let html = `
+    <div class="portfolio-table-wrap">
     <table class="portfolio-table">
       <thead>
         <tr>
@@ -284,7 +285,7 @@ function renderPortfolio() {
     });
   });
 
-  html += `</tbody></table>`;
+  html += `</tbody></table></div>`;
   container.innerHTML = html;
   attachEditHandlers(container);
 }

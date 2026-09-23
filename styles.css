@@ -137,21 +137,21 @@ body {
 .kpi-card {
   background: var(--color-surface);
   border-radius: var(--radius);
-  padding: 12px 16px;
+  padding: 10px 14px;
   text-align: center;
   box-shadow: var(--shadow);
 }
 
 .kpi-card .kpi-value {
-  font-size: 38px;
+  font-size: 28px;
   font-weight: 700;
   line-height: 1;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .kpi-card .kpi-label {
   color: var(--color-text-muted);
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-weight: 500;
@@ -181,14 +181,17 @@ body {
 .chart-wrapper { height: 180px; }
 
 /* ─── Таблица портфеля ───────────────────────────────────────────────────── */
+.portfolio-table-wrap {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
 .portfolio-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
   background: var(--color-surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
 }
 
 .portfolio-table th {
