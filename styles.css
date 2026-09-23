@@ -44,9 +44,9 @@ body {
 }
 
 .header-logo {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
-  color: var(--color-accent);
+  color: var(--color-text);
   padding: 14px 0;
   white-space: nowrap;
 }
@@ -55,7 +55,7 @@ body {
   color: var(--color-text-muted);
   font-weight: 400;
   font-size: 13px;
-  margin-left: 6px;
+  margin-left: 10px;
 }
 
 .nav-tabs {
