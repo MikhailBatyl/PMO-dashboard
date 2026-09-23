@@ -3,7 +3,7 @@
  * Замените значение APPS_SCRIPT_URL на URL вашего деплоя Apps Script
  */
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/ВСТАВЬТЕ_ВАШ_URL/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz02nK3oTfWZaArRrRV-IMKZrPCPqTBFWAEB-BFd-8vfIsZNike9i-D5R_cCl56sr_Y/exec';
 
 // Ключ и TTL кэша в localStorage (2 минуты)
 const CACHE_KEY = 'pmo_data_cache';
