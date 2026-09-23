@@ -238,6 +238,20 @@ body {
 
 .hidden { display: none !important; }
 
+/* Сводные ячейки level-1 */
+.summary-cell { vertical-align: top; padding: 8px 14px !important; font-size: 12px; }
+.summary-pm { color: var(--color-text-muted); white-space: nowrap; }
+.summary-text { color: var(--color-text-muted); font-size: 12px; max-width: 200px; }
+
+.prio-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.prio-Высокий { background: rgba(220,38,38,0.1); color: var(--color-red); }
+.prio-Средний { background: rgba(217,119,6,0.1); color: var(--color-yellow); }
+.prio-Низкий  { background: rgba(22,163,74,0.1); color: var(--color-green); }
+.prio-—       { color: var(--color-text-muted); }
+
+.row-level1.summary-red    { border-left: 3px solid var(--color-red); background: var(--color-red-bg); }
+.row-level1.summary-yellow { border-left: 3px solid var(--color-yellow); background: var(--color-yellow-bg); }
+
 /* Иконки и бейджи */
 .toggle-icon { margin-right: 8px; font-size: 10px; color: var(--color-text-muted); }
 

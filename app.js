@@ -195,6 +195,39 @@ function populateOwnerFilter() {
   });
 }
 
+// ─── Агрегация данных по проекту/продукту ────────────────────────────────────
+function getItemSummary(item) {
+  const tasks = [];
+  item.subgroups.forEach(sg => sg.tasks.forEach(t => tasks.push(t)));
+
+  // PM — уникальные ответственные
+  const pms = [...new Set(tasks.map(t => t.owner).filter(Boolean))];
+
+  // Приоритет — наивысший (наименьший номер)
+  const priorities = tasks.map(t => t.priority).filter(p => p != null && !isNaN(p));
+  const minPriority = priorities.length ? Math.min(...priorities) : null;
+  const priorityLabel = minPriority === 1 ? 'Высокий' : minPriority === 2 ? 'Средний' : minPriority != null ? 'Низкий' : '—';
+
+  // Итоговый статус
+  const hasRed    = tasks.some(t => t.status === '🔴');
+  const hasYellow = tasks.some(t => t.status === '🟡');
+  const overallStatus = hasRed ? '🔴' : hasYellow ? '🟡' : '🟢';
+
+  // Тренд — наихудший
+  const overallTrend = tasks.some(t => t.trend === '↓') ? '↓'
+                     : tasks.some(t => t.trend === '→') ? '→' : '↑';
+
+  // Риски и причины: если красный — собираем из всех жёлтых и красных; если только жёлтый — из жёлтых
+  const problemTasks = hasRed
+    ? tasks.filter(t => t.status === '🔴' || t.status === '🟡')
+    : tasks.filter(t => t.status === '🟡');
+
+  const risks      = [...new Set(problemTasks.map(t => t.risk).filter(r => r && r !== '-'))];
+  const deviations = [...new Set(problemTasks.map(t => t.deviationReason).filter(d => d && d !== '-'))];
+
+  return { pms, priorityLabel, overallStatus, overallTrend, risks, deviations };
+}
+
 // ─── Портфель (иерархическая таблица) ────────────────────────────────────────
 function renderPortfolio() {
   const container = document.getElementById('portfolio-container');
@@ -224,17 +257,25 @@ function renderPortfolio() {
 
   items.forEach(item => {
     const hasRed = itemHasStatus(item, '🔴');
-    const isOpen = hasRed; // Группы с 🔴 открыты по умолчанию
+    const isOpen = hasRed;
     const groupId = `group-${item.id}`;
+    const s = getItemSummary(item);
+    const statusRowClass = s.overallStatus === '🔴' ? 'summary-red' : s.overallStatus === '🟡' ? 'summary-yellow' : '';
 
     html += `
-      <tr class="row-level1 ${isOpen ? 'open' : 'closed'}" data-group="${groupId}" onclick="toggleGroup('${groupId}')">
-        <td colspan="7">
+      <tr class="row-level1 ${statusRowClass} ${isOpen ? 'open' : 'closed'}" data-group="${groupId}" onclick="toggleGroup('${groupId}')">
+        <td>
           <span class="toggle-icon">${isOpen ? '▼' : '▶'}</span>
           <span class="type-badge ${item.type === 'Проект' ? 'badge-project' : 'badge-product'}">${item.type}</span>
           <strong>${escHtml(item.name)}</strong>
-          ${item.businessNote ? `<span class="biz-note">${item.businessNote.split(/\.\s+|\n/).filter(Boolean).map((s,i,a) => escHtml(s) + (i < a.length-1 ? '.' : '')).join('<br>')}</span>` : ''}
+          ${item.businessNote ? `<span class="biz-note">${item.businessNote.split(/\.\s+|\n/).filter(Boolean).map((s2,i,a) => escHtml(s2) + (i < a.length-1 ? '.' : '')).join('<br>')}</span>` : ''}
         </td>
+        <td class="summary-cell summary-pm">${s.pms.map(p => escHtml(p)).join('<br>') || '—'}</td>
+        <td class="summary-cell"><span class="prio-badge prio-${s.priorityLabel}">${s.priorityLabel}</span></td>
+        <td class="summary-cell" style="font-size:18px;text-align:center">${s.overallStatus}</td>
+        <td class="summary-cell" style="text-align:center">${s.overallTrend}</td>
+        <td class="summary-cell summary-text">${s.risks.map(r => escHtml(r)).join('<br>') || (s.overallStatus === '🟢' ? '—' : '')}</td>
+        <td class="summary-cell summary-text">${s.deviations.map(d => escHtml(d)).join('<br>') || (s.overallStatus === '🟢' ? '—' : '')}</td>
       </tr>
     `;
 
