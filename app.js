@@ -489,8 +489,7 @@ function formatMonth(m) {
 function getPeriodLabel(timeline) {
   const planMonths = Object.keys(timeline || {}).filter(m => timeline[m].plan);
   if (!planMonths.length) return '—';
-  const first = planMonths[0], last = planMonths[planMonths.length - 1];
-  return first === last ? formatMonth(first) : formatMonth(first) + ' – ' + formatMonth(last);
+  return formatMonth(planMonths[planMonths.length - 1]);
 }
 
 function buildPeriodGantt(task) {
