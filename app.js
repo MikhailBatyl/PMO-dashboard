@@ -258,9 +258,14 @@ function renderPortfolio() {
   `;
 
   items.forEach(item => {
+    // Цвет полосы по худшему статусу прикреплённых ценностей
+    const _allTasks = item.subgroups.flatMap(sg => sg.tasks);
+    const _hasRed    = _allTasks.some(t => t.status === '🔴');
+    const _hasYellow = _allTasks.some(t => t.status === '🟡');
+    const _headerColor = _hasRed ? 'header-red' : _hasYellow ? 'header-yellow' : 'header-green';
 
     html += `
-      <tr class="row-level1 row-project-header">
+      <tr class="row-level1 row-project-header ${_headerColor}">
         <td colspan="8">
           <span class="type-badge ${item.type === 'Проект' ? 'badge-project' : 'badge-product'}">${item.type}</span>
           <strong>${escHtml(item.name)}</strong>
