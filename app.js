@@ -288,12 +288,11 @@ function renderPortfolio() {
       sg.tasks.forEach(task => {
         html += `
           <tr class="row-level3 ${statusToClass(task.status)}">
-            <td></td>
-            <td class="task-name" data-tip-desc="${escHtml(task.description||'')}"
+            <td colspan="2" class="task-name" data-tip-desc="${escHtml(task.description||'')}"
                 data-tip-kpi="${escHtml(task.kpi||'')}"
                 data-tip-task="${escHtml(task.task)}">${escHtml(task.task)}</td>
             <td>${escHtml(task.owner)}</td>
-            <td><span class="priority-badge">${task.priority || '—'}</span></td>
+            <td><span class="prio-badge prio-${prioLabel(task.priority)}">${prioLabel(task.priority)}</span></td>
             <td>
               <span class="status-selector" data-task="${escHtml(task.task)}" data-field="status">
                 ${task.status}
@@ -354,6 +353,15 @@ function toggleGroup(groupId) {
 }
 
 // ─── Инлайн-редактирование ────────────────────────────────────────────────────
+// ─── Приоритет: число → текст ────────────────────────────────────
+function prioLabel(p) {
+  if (p === 1) return 'Высокий';
+  if (p === 2) return 'Средний';
+  if (p != null && !isNaN(p) && p >= 3) return 'Низкий';
+  return '—';
+}
+
+
 function attachEditHandlers(container) {
   // Клик по статусу → переход в Гантт для данной задачи
   container.querySelectorAll('.status-selector').forEach(el => {

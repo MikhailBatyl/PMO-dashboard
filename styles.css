@@ -207,6 +207,16 @@ body {
   white-space: nowrap;
 }
 
+/* Ширины столбцов портфельной таблицы */
+.portfolio-table th:nth-child(1) { width: 14%; }   /* Тип / Наим. */
+.portfolio-table th:nth-child(2) { width: 18%; }   /* Ценность */
+.portfolio-table th:nth-child(3) { width: 9%;  }   /* Отв. (PM) */
+.portfolio-table th:nth-child(4) { width: 8%;  }   /* Приоритет */
+.portfolio-table th:nth-child(5) { width: 6%;  }   /* Статус */
+.portfolio-table th:nth-child(6) { width: 6%;  }   /* Тренд */
+.portfolio-table th:nth-child(7) { width: 18%; }   /* Ключевой риск */
+.portfolio-table th:nth-child(8) { width: 21%; }   /* Причина отклонения */
+
 .portfolio-table td {
   padding: 8px 14px;
   border-bottom: 1px solid var(--color-border);
@@ -226,7 +236,7 @@ body {
 .row-level2:hover { background: #e8edf3; }
 .row-level2 td { padding-left: 28px; color: var(--color-text-muted); }
 
-.row-level3 td { padding-left: 44px; }
+.row-level3 td { padding-left: 10px; }
 .row-level3:hover { background: #f8fafc; }
 
 .row-level3.status-red { background: var(--color-red-bg); }
@@ -285,7 +295,12 @@ body {
   color: var(--color-text-muted);
 }
 
-.task-name { max-width: 320px; }
+.task-name {
+  max-width: 340px;
+  padding-left: 24px !important;  /* отступ от левого края */
+  vertical-align: middle;
+  text-align: left;
+}
 
 /* Интерактивные поля */
 .status-selector, .trend-selector {
