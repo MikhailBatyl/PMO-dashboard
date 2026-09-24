@@ -1,4 +1,4 @@
-/**
+﻿/**
  * app.js — основная логика PMO Dashboard
  * Рендер иерархической таблицы, KPI-карточек, фильтров, экрана рисков, инлайн-редактирования
  */
@@ -243,7 +243,8 @@ function renderPortfolio() {
     <table class="portfolio-table">
       <thead>
         <tr>
-          <th>Тип / Наименование / Задача</th>
+          <th>Тип / Наименование</th>
+          <th>Ценность</th>
           <th>Отв. (PM)</th>
           <th>Приоритет</th>
           <th>Статус</th>
@@ -256,20 +257,17 @@ function renderPortfolio() {
   `;
 
   items.forEach(item => {
-    const hasRed = itemHasStatus(item, '🔴');
-    const isOpen = hasRed;
-    const groupId = `group-${item.id}`;
     const s = getItemSummary(item);
     const statusRowClass = s.overallStatus === '🔴' ? 'summary-red' : s.overallStatus === '🟡' ? 'summary-yellow' : '';
 
     html += `
-      <tr class="row-level1 ${statusRowClass} ${isOpen ? 'open' : 'closed'}" data-group="${groupId}" onclick="toggleGroup('${groupId}')">
+      <tr class="row-level1 ${statusRowClass}">
         <td>
-          <span class="toggle-icon">${isOpen ? '▼' : '▶'}</span>
           <span class="type-badge ${item.type === 'Проект' ? 'badge-project' : 'badge-product'}">${item.type}</span>
           <strong>${escHtml(item.name)}</strong>
           ${item.businessNote ? `<span class="biz-note">${item.businessNote.split(/\.\s+|\n/).filter(Boolean).map((s2,i,a) => escHtml(s2) + (i < a.length-1 ? '.' : '')).join('<br>')}</span>` : ''}
         </td>
+        <td></td>
         <td class="summary-cell summary-pm">${s.pms.map(p => escHtml(p)).join('<br>') || '—'}</td>
         <td class="summary-cell"><span class="prio-badge prio-${s.priorityLabel}">${s.priorityLabel}</span></td>
         <td class="summary-cell" style="font-size:18px;text-align:center">${s.overallStatus}</td>
@@ -279,14 +277,11 @@ function renderPortfolio() {
       </tr>
     `;
 
-    item.subgroups.forEach((sg, sgIdx) => {
-      const sgId = `${groupId}-sg${sgIdx}`;
-
+    item.subgroups.forEach(sg => {
       if (sg.subgroupName) {
         html += `
-          <tr class="row-level2 group-${groupId} ${isOpen ? '' : 'hidden'}" data-group="${sgId}" onclick="toggleGroup('${sgId}')">
-            <td colspan="7">
-              <span class="toggle-icon">▼</span>
+          <tr class="row-level2">
+            <td colspan="8">
               <span class="subgroup-label">${escHtml(sg.subgroupName)}</span>
             </td>
           </tr>
@@ -294,9 +289,9 @@ function renderPortfolio() {
       }
 
       sg.tasks.forEach(task => {
-        const parentClass = sg.subgroupName ? `group-${groupId} group-${sgId}` : `group-${groupId}`;
         html += `
-          <tr class="row-level3 ${parentClass} ${isOpen ? '' : 'hidden'} ${statusToClass(task.status)}">
+          <tr class="row-level3 ${statusToClass(task.status)}">
+            <td></td>
             <td class="task-name">${escHtml(task.task)}</td>
             <td>${escHtml(task.owner)}</td>
             <td><span class="priority-badge">${task.priority || '—'}</span></td>

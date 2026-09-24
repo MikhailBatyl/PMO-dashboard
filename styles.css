@@ -216,16 +216,12 @@ body {
 /* Уровни строк */
 .row-level1 {
   background: var(--color-surface);
-  cursor: pointer;
-  user-select: none;
 }
 .row-level1:hover { background: #f8fafc; }
 .row-level1 td { font-size: 14px; padding: 12px 14px; }
 
 .row-level2 {
   background: var(--color-surface2);
-  cursor: pointer;
-  user-select: none;
 }
 .row-level2:hover { background: #e8edf3; }
 .row-level2 td { padding-left: 28px; color: var(--color-text-muted); }
