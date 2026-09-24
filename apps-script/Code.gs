@@ -3,32 +3,33 @@
  * Развёртывается как Web App: Execute as Me, Who has access — Only users in <ваш домен>
  *
  * Структура листа «Статус проектов и продуктов»:
- * Строки бывают трёх типов (распознаются по колонке B «Тип»):
- *   Уровень 1 — строка с «Проект» или «Продукт» → заголовок группы
- *   Уровень 2 — строка, где B пуст, C непуст, D пуст → подгруппа (Направление)
- *   Уровень 3 — строка с заполненным D (Отв.) → конкретная задача
+ * Строки бывают трёх типов (распознаются по колонкам):
+ *   Уровень 1 — строка с «Проект» или «Продукт» в колонке B → заголовок группы
+ *   Уровень 2 — B пусто, C непусто, D (Ценность) пусто, E (Отв.) пусто → подгруппа
+ *   Уровень 3 — D (Ценность) непусто и E (Отв.) непусто → конкретная ценность/задача
  *
  * Колонки (0-индексация):
  *  0  — №
  *  1  — Тип
- *  2  — Наименование / задача
- *  3  — Отв. (PM)
- *  4  — Приоритет
- *  5  — Динамика ДК (статус: 🟢/🟡/🔴)
- *  6  — Тренд (↑/→/↓)
- *  7  — Ключевой риск
- *  8  — Причина отклонения
- *  9  — Sep-26 План
- * 10  — Sep-26 Факт
- * 11  — Oct-26 План
- * 12  — Oct-26 Факт
- * 13  — Nov-26 План
- * 14  — Nov-26 Факт
- * 15  — Dec-26 План
- * 16  — Dec-26 Факт
- * 17  — Jan-27 План
- * 18  — Jan-27 Факт
- * 19  — Примечание (бизнес-эффект, заполняется на строке Уровня 1)
+ *  2  — Наименование (проект/продукт на уровне 1, подгруппа на уровне 2)
+ *  3  — Ценность (название ценности/задачи, уровень 3)
+ *  4  — Отв. (PM)
+ *  5  — Приоритет
+ *  6  — Динамика ДК (статус: 🟢/🟡/🔴)
+ *  7  — Тренд (↑/→/↓)
+ *  8  — Ключевой риск
+ *  9  — Причина отклонения
+ * 10  — Sep-26 План
+ * 11  — Sep-26 Факт
+ * 12  — Oct-26 План
+ * 13  — Oct-26 Факт
+ * 14  — Nov-26 План
+ * 15  — Nov-26 Факт
+ * 16  — Dec-26 План
+ * 17  — Dec-26 Факт
+ * 18  — Jan-27 План
+ * 19  — Jan-27 Факт
+ * 20  — Описание ценности (уровень 1: бизнес-эффект/КПЭ; уровень 3: описание для tooltip)
  */
 
 var SHEET_NAME = 'Статус проектов и продуктов';
@@ -36,7 +37,7 @@ var SHEET_NAME = 'Статус проектов и продуктов';
 // Список месяцев в том же порядке, что и колонки листа
 var MONTHS = ['Sep-26', 'Oct-26', 'Nov-26', 'Dec-26', 'Jan-27'];
 // Индекс первой колонки плана Sep-26
-var TIMELINE_START_COL = 9;
+var TIMELINE_START_COL = 10;
 
 /**
  * doGet — чтение листа и отдача JSON
@@ -50,9 +51,9 @@ function doGet(e) {
 }
 
 /**
- * doPost — обновление одной ячейки по имени задачи и названию поля
+ * doPost — обновление одной ячейки по имени ценности и названию поля
  * Тело запроса: { id, field, value }
- *   id    — точное название задачи (колонка C на Уровне 3)
+ *   id    — точное название ценности (колонка D, уровень 3)
  *   field — 'status' | 'trend' | 'risk' | 'deviationReason' | 'timeline'
  *   value — новое значение
  */
@@ -67,19 +68,19 @@ function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
   var rows = sheet.getDataRange().getValues();
 
+  // Маппинг полей на индексы столбцов (новая структура)
   var fieldToCol = {
-    status: 5,
-    trend: 6,
-    risk: 7,
-    deviationReason: 8
+    status: 6,
+    trend: 7,
+    risk: 8,
+    deviationReason: 9
   };
 
   for (var i = 0; i < rows.length; i++) {
-    // Ищем строку задачи (Уровень 3) по точному совпадению названия
-    if (String(rows[i][2]).trim() === String(payload.id).trim() && rows[i][3]) {
+    // Ищем строку ценности (уровень 3) по col D (Ценность) + проверяем наличие col E (Отв.)
+    if (String(rows[i][3]).trim() === String(payload.id).trim() && rows[i][4]) {
 
       if (payload.field === 'timeline') {
-        // Обновляем конкретную ячейку плана или факта
         // payload.value: { month: 'Sep-26', type: 'plan'|'fact', checked: true|false }
         var monthIdx = MONTHS.indexOf(payload.value.month);
         if (monthIdx === -1) {
@@ -100,7 +101,7 @@ function doPost(e) {
     }
   }
 
-  return jsonResponse({ ok: false, error: 'Задача не найдена: ' + payload.id });
+  return jsonResponse({ ok: false, error: 'Ценность не найдена: ' + payload.id });
 }
 
 /**
@@ -114,20 +115,21 @@ function parseSheet(sheet) {
 
   for (var i = 1; i < rows.length; i++) { // пропускаем строку заголовков (i=0)
     var row = rows[i];
-    var num = String(row[0]).trim();
-    var type = String(row[1]).trim();
-    var name = String(row[2]).trim();
-    var owner = String(row[3]).trim();
+    var type  = String(row[1]).trim();   // Тип (B)
+    var name  = String(row[2]).trim();   // Наименование (C)
+    var value = String(row[3]).trim();   // Ценность (D)
+    var owner = String(row[4]).trim();   // Отв. (PM) (E)
 
     // Пропускаем пустые строки
-    if (!name && !type) continue;
+    if (!name && !type && !value) continue;
 
-    // Уровень 1 — заголовок проекта/продукта
+    // ── Уровень 1 — заголовок проекта/продукта ──
     if (type === 'Проект' || type === 'Продукт') {
-      // Описание читаем из колонки T (индекс 19); если пусто — ищем в последней непустой ячейке строки
-      var noteVal = String(row[19] || '').trim();
+      // Описание/КПЭ читаем из колонки U (индекс 20 = "Описание ценности")
+      var noteVal = String(row[20] || '').trim();
+      // Fallback: ищем первую непустую ячейку после колонки таймлайна
       if (!noteVal) {
-        for (var ci = row.length - 1; ci >= 20; ci--) {
+        for (var ci = row.length - 1; ci >= 21; ci--) {
           var cv = String(row[ci] || '').trim();
           if (cv) { noteVal = cv; break; }
         }
@@ -147,24 +149,28 @@ function parseSheet(sheet) {
 
     if (!currentItem) continue;
 
-    // Уровень 2 — подгруппа (Направление): B пусто, C непусто, D пусто
-    if (!type && name && !owner) {
+    // ── Уровень 2 — подгруппа: B пусто, C непусто, D пусто, E пусто ──
+    if (!type && name && !value && !owner) {
       currentSubgroup = { subgroupName: name, tasks: [] };
       currentItem.subgroups.push(currentSubgroup);
       continue;
     }
 
-    // Уровень 3 — задача: есть ответственный
+    // ── Уровень 3 — ценность/задача: есть ответственный (E) ──
     if (owner) {
+      // Название ценности из col D; если D пусто — fallback на col C
+      var taskName = value || name;
+
       var task = {
-        task: name,
-        owner: owner,
-        priority: parseInt(String(row[4]).trim()) || null,
-        status: String(row[5]).trim(),
-        trend: String(row[6]).trim(),
-        risk: String(row[7]).trim() || '-',
-        deviationReason: String(row[8]).trim() || '-',
-        timeline: {}
+        task:            taskName,
+        owner:           owner,
+        priority:        parseInt(String(row[5]).trim()) || null,  // F
+        status:          String(row[6]).trim(),                    // G
+        trend:           String(row[7]).trim(),                    // H
+        risk:            String(row[8]).trim() || '-',             // I
+        deviationReason: String(row[9]).trim() || '-',             // J
+        description:     String(row[20] || '').trim(),            // U — Описание ценности (tooltip)
+        timeline:        {}
       };
 
       // Читаем плановые и фактические значения по каждому месяцу
