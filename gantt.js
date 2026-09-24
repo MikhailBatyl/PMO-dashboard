@@ -62,7 +62,8 @@ function renderGantt(container, items) {
           return tl.fact && !tl.plan;
         });
 
-        const rowClass = isOverdue ? 'gantt-task-row gantt-overdue' : `gantt-task-row ${statusClass}`;
+        const isFocused = typeof ganttFocusTask !== 'undefined' && ganttFocusTask && ganttFocusTask === task.task;
+        const rowClass = isOverdue ? 'gantt-task-row gantt-overdue' : `gantt-task-row ${statusClass}${isFocused ? ' gantt-focused' : ''}`;
 
         html += `<tr class="${rowClass}">
           <td class="gantt-task-name gantt-task-indent">
@@ -90,8 +91,16 @@ function renderGantt(container, items) {
   });
 
   html += `</tbody></table></div>`;
-  container.innerHTML = html;
+
+  // Баннер активной задачи
+  const focusBanner = (typeof ganttFocusTask !== 'undefined' && ganttFocusTask)
+    ? `<div class="gantt-focus-banner">Показана задача: <strong>${escapeHtml(ganttFocusTask)}</strong>
+        <button onclick="ganttFocusTask=null;renderGantt(document.getElementById('gantt-container'),window.appData?appData.items:[]);" class="gantt-focus-clear">× Сбросить фильтр</button></div>`
+    : '';
+
+  container.innerHTML = focusBanner + html;
 }
+
 
 /**
  * Собирает уникальный список месяцев из всех задач в порядке следования

@@ -9,6 +9,7 @@ let activeTab = 'portfolio';  // текущий активный экран
 let filterType = '';          // фильтр по типу (Проект/Продукт)
 let filterOwner = '';         // фильтр по ответственному
 let filterStatus = '';        // фильтр по статусу
+let ganttFocusTask = null;    // задача для перехода в Гантт
 
 // ─── Инициализация ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
@@ -257,23 +258,14 @@ function renderPortfolio() {
   `;
 
   items.forEach(item => {
-    const s = getItemSummary(item);
-    const statusRowClass = s.overallStatus === '🔴' ? 'summary-red' : s.overallStatus === '🟡' ? 'summary-yellow' : '';
 
     html += `
-      <tr class="row-level1 ${statusRowClass}">
-        <td>
+      <tr class="row-level1 row-project-header">
+        <td colspan="8">
           <span class="type-badge ${item.type === 'Проект' ? 'badge-project' : 'badge-product'}">${item.type}</span>
           <strong>${escHtml(item.name)}</strong>
           ${item.businessNote ? `<span class="biz-note">${item.businessNote.split(/\.\s+|\n/).filter(Boolean).map((s2,i,a) => escHtml(s2) + (i < a.length-1 ? '.' : '')).join('<br>')}</span>` : ''}
         </td>
-        <td></td>
-        <td class="summary-cell summary-pm">${s.pms.map(p => escHtml(p)).join('<br>') || '—'}</td>
-        <td class="summary-cell"><span class="prio-badge prio-${s.priorityLabel}">${s.priorityLabel}</span></td>
-        <td class="summary-cell" style="font-size:18px;text-align:center">${s.overallStatus}</td>
-        <td class="summary-cell" style="text-align:center">${s.overallTrend}</td>
-        <td class="summary-cell summary-text">${s.risks.map(r => escHtml(r)).join('<br>') || (s.overallStatus === '🟢' ? '—' : '')}</td>
-        <td class="summary-cell summary-text">${s.deviations.map(d => escHtml(d)).join('<br>') || (s.overallStatus === '🟢' ? '—' : '')}</td>
       </tr>
     `;
 
@@ -292,7 +284,9 @@ function renderPortfolio() {
         html += `
           <tr class="row-level3 ${statusToClass(task.status)}">
             <td></td>
-            <td class="task-name">${escHtml(task.task)}</td>
+            <td class="task-name" data-tip-desc="${escHtml(task.description||'')}"
+                data-tip-kpi="${escHtml(task.kpi||'')}"
+                data-tip-task="${escHtml(task.task)}">${escHtml(task.task)}</td>
             <td>${escHtml(task.owner)}</td>
             <td><span class="priority-badge">${task.priority || '—'}</span></td>
             <td>
@@ -324,6 +318,7 @@ function renderPortfolio() {
   html += `</tbody></table></div>`;
   container.innerHTML = html;
   attachEditHandlers(container);
+  attachTooltipHandlers(container);
 }
 
 /**
@@ -355,17 +350,13 @@ function toggleGroup(groupId) {
 
 // ─── Инлайн-редактирование ────────────────────────────────────────────────────
 function attachEditHandlers(container) {
-  // Клик по статусу → циклическая смена
+  // Клик по статусу → переход в Гантт для данной задачи
   container.querySelectorAll('.status-selector').forEach(el => {
     el.style.cursor = 'pointer';
-    el.title = 'Нажмите для смены статуса';
-    el.addEventListener('click', async e => {
+    el.title = 'Нажмите — открыть в Гантте';
+    el.addEventListener('click', e => {
       e.stopPropagation();
-      const values = ['🟢', '🟡', '🔴'];
-      const cur = el.textContent.trim();
-      const next = values[(values.indexOf(cur) + 1) % values.length];
-      el.textContent = next;
-      await saveField(el.dataset.task, 'status', next);
+      navigateToGanttTask(el.dataset.task);
     });
   });
 
@@ -423,6 +414,54 @@ async function saveField(taskName, field, value) {
   } catch (err) {
     showToast('Ошибка сохранения: ' + err.message, true);
   }
+}
+
+// ─── Навигация в Гантт по задаче ────────────────────────────────────
+function navigateToGanttTask(taskName) {
+  ganttFocusTask = taskName;
+  switchTab('gantt');
+  renderGantt(document.getElementById('gantt-container'), getFilteredItems());
+  setTimeout(() => {
+    const focused = document.querySelector('.gantt-focused');
+    if (focused) focused.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 120);
+}
+
+// ─── Всплывающие подсказки по ценностям ────────────────────────────
+function attachTooltipHandlers(container) {
+  const tooltip = document.getElementById('task-tooltip');
+  if (!tooltip) return;
+
+  container.querySelectorAll('td.task-name[data-tip-task]').forEach(el => {
+    const desc = el.dataset.tipDesc;
+    const kpi  = el.dataset.tipKpi;
+    const name = el.dataset.tipTask;
+    if (!desc && !kpi) return;
+
+    el.classList.add('has-tooltip');
+
+    el.addEventListener('mouseenter', e => {
+      tooltip.querySelector('.tooltip-title').textContent = name;
+      const descEl = tooltip.querySelector('.tooltip-desc');
+      const kpiEl  = tooltip.querySelector('.tooltip-kpi');
+      descEl.textContent = desc || '';
+      descEl.style.display = desc ? '' : 'none';
+      kpiEl.textContent = kpi ? 'КПЭ: ' + kpi : '';
+      kpiEl.style.display = kpi ? '' : 'none';
+      tooltip.classList.remove('hidden');
+      positionTooltip(e, tooltip);
+    });
+    el.addEventListener('mousemove', e => positionTooltip(e, tooltip));
+    el.addEventListener('mouseleave', () => tooltip.classList.add('hidden'));
+  });
+}
+
+function positionTooltip(e, tooltip) {
+  const x = e.clientX + 14, y = e.clientY + 14;
+  const w = tooltip.offsetWidth  || 280;
+  const h = tooltip.offsetHeight || 80;
+  tooltip.style.left = (x + w > window.innerWidth  ? x - w - 28 : x) + 'px';
+  tooltip.style.top  = (y + h > window.innerHeight ? y - h - 28 : y) + 'px';
 }
 
 // ─── Экран Риски и отклонения ─────────────────────────────────────────────────
