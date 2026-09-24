@@ -215,7 +215,7 @@ body {
 .portfolio-table th:nth-child(5) { width: 6%;  }   /* Статус */
 .portfolio-table th:nth-child(6) { width: 6%;  }   /* Тренд */
 .portfolio-table th:nth-child(7) { width: 18%; }   /* Ключевой риск */
-.portfolio-table th:nth-child(8) { width: 21%; }   /* Причина отклонения */
+.portfolio-table th:nth-child(8) { width: 12%; }   /* Период запуска */
 
 .portfolio-table td {
   padding: 8px 14px;
@@ -572,6 +572,85 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
 /* Кликабельный статус → переход в гантт */
 .status-selector { transition: transform 0.15s; }
 .status-selector:hover { transform: scale(1.25); background: transparent; }
+
+/* ─── Период запуска: ячейка в таблице ──────────────────────────── */
+.period-cell {
+  cursor: help;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-align: center;
+}
+.period-cell:hover { background: rgba(37,99,235,0.05); }
+.period-label { border-bottom: 1px dashed rgba(37,99,235,0.4); padding-bottom: 1px; }
+
+/* Попап мини-Гантт */
+#period-popup {
+  position: fixed;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 14px 16px 10px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.14);
+  min-width: 340px;
+  z-index: 700;
+  pointer-events: none;
+  font-size: 12px;
+}
+#period-popup.hidden { display: none; }
+
+.pg-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-text);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--color-border);
+}
+.pg-nodata { color: var(--color-text-muted); }
+
+.pg-grid {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 8px;
+  align-items: flex-end;
+}
+.pg-col { flex: 1; text-align: center; min-width: 40px; }
+.pg-mlbl {
+  font-size: 9px;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+.pg-bar {
+  height: 16px;
+  border-radius: 3px;
+  background: var(--color-border);
+  margin-bottom: 3px;
+  transition: background 0.15s;
+}
+.pg-plan.pg-on { background: rgba(37,99,235,0.55); }
+.pg-fact.pg-on { background: rgba(22,163,74,0.65); }
+
+.pg-legend {
+  display: flex;
+  gap: 14px;
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border);
+  font-size: 11px;
+  font-weight: 500;
+}
+.pg-plan-leg { color: #2563eb; }
+.pg-fact-leg { color: #16a34a; }
+
+/* Пустая ячейка col1 в строках задач */
+.td-empty {
+  width: 6px !important;
+  padding: 0 !important;
+  min-width: 0;
+  border-right: 3px solid var(--color-border);
+}
 @media (min-width: 1600px) {
   body { font-size: 16px; }
   .portfolio-table { font-size: 15px; }

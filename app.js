@@ -251,7 +251,7 @@ function renderPortfolio() {
           <th>Статус</th>
           <th>Тренд</th>
           <th>Ключевой риск</th>
-          <th>Причина отклонения</th>
+          <th>Период запуска</th>
         </tr>
       </thead>
       <tbody>
@@ -288,7 +288,8 @@ function renderPortfolio() {
       sg.tasks.forEach(task => {
         html += `
           <tr class="row-level3 ${statusToClass(task.status)}">
-            <td colspan="2" class="task-name" data-tip-desc="${escHtml(task.description||'')}"
+            <td class="td-empty"></td>
+            <td class="task-name" data-tip-desc="${escHtml(task.description||'')}"
                 data-tip-kpi="${escHtml(task.kpi||'')}"
                 data-tip-task="${escHtml(task.task)}">${escHtml(task.task)}</td>
             <td>${escHtml(task.owner)}</td>
@@ -308,10 +309,8 @@ function renderPortfolio() {
                 ${escHtml(task.risk)}
               </span>
             </td>
-            <td>
-              <span class="editable-field" data-task="${escHtml(task.task)}" data-field="deviationReason">
-                ${escHtml(task.deviationReason)}
-              </span>
+            <td class="period-cell" data-task="${escHtml(task.task)}">
+              <span class="period-label">${getPeriodLabel(task.timeline)}</span>
             </td>
           </tr>
         `;
@@ -323,6 +322,7 @@ function renderPortfolio() {
   container.innerHTML = html;
   attachEditHandlers(container);
   attachTooltipHandlers(container);
+  attachPeriodHandlers(container);
 }
 
 /**
@@ -475,6 +475,69 @@ function positionTooltip(e, tooltip) {
   const h = tooltip.offsetHeight || 80;
   tooltip.style.left = (x + w > window.innerWidth  ? x - w - 28 : x) + 'px';
   tooltip.style.top  = (y + h > window.innerHeight ? y - h - 28 : y) + 'px';
+}
+
+// ─── Период запуска: вспомогательные функции ───────────────────────
+const MONTH_RU = {Sep:'Сен',Oct:'Окт',Nov:'Ноя',Dec:'Дек',
+  Jan:'Янв',Feb:'Фев',Mar:'Мар',Apr:'Апр',May:'Май',Jun:'Июн',Jul:'Июл',Aug:'Авг'};
+
+function formatMonth(m) {
+  const p = m.split('-');
+  return (MONTH_RU[p[0]] || p[0]) + '\'' + p[1];
+}
+
+function getPeriodLabel(timeline) {
+  const planMonths = Object.keys(timeline || {}).filter(m => timeline[m].plan);
+  if (!planMonths.length) return '—';
+  const first = planMonths[0], last = planMonths[planMonths.length - 1];
+  return first === last ? formatMonth(first) : formatMonth(first) + ' – ' + formatMonth(last);
+}
+
+function buildPeriodGantt(task) {
+  const months = Object.keys(task.timeline || {});
+  if (!months.length) return '<p class="pg-nodata">Нет данных</p>';
+  const cols = months.map(m => {
+    const tl = task.timeline[m];
+    return `<div class="pg-col">
+      <div class="pg-mlbl">${formatMonth(m)}</div>
+      <div class="pg-bar pg-plan${tl.plan ? ' pg-on' : ''}"></div>
+      <div class="pg-bar pg-fact${tl.fact ? ' pg-on' : ''}"></div>
+    </div>`;
+  }).join('');
+  return `<div class="pg-title">${escHtml(task.task)}</div>
+    <div class="pg-grid">${cols}</div>
+    <div class="pg-legend">
+      <span class="pg-leg pg-plan-leg">▬ План</span>
+      <span class="pg-leg pg-fact-leg">▬ Факт</span>
+    </div>`;
+}
+
+function attachPeriodHandlers(container) {
+  const popup = document.getElementById('period-popup');
+  if (!popup) return;
+  container.querySelectorAll('td.period-cell[data-task]').forEach(el => {
+    el.addEventListener('mouseenter', e => {
+      const name = el.dataset.task;
+      let task = null;
+      if (appData) appData.items.forEach(it =>
+        it.subgroups.forEach(sg =>
+          sg.tasks.forEach(t => { if (t.task === name) task = t; })));
+      if (!task) return;
+      popup.innerHTML = buildPeriodGantt(task);
+      popup.classList.remove('hidden');
+      positionPeriodPopup(e, popup);
+    });
+    el.addEventListener('mousemove', e => positionPeriodPopup(e, popup));
+    el.addEventListener('mouseleave', () => popup.classList.add('hidden'));
+  });
+}
+
+function positionPeriodPopup(e, popup) {
+  const w = popup.offsetWidth || 380, h = popup.offsetHeight || 90;
+  const x = e.clientX - w / 2;
+  const y = e.clientY + 18;
+  popup.style.left = Math.max(8, Math.min(x, window.innerWidth - w - 8)) + 'px';
+  popup.style.top  = (y + h > window.innerHeight ? e.clientY - h - 12 : y) + 'px';
 }
 
 // ─── Экран Риски и отклонения ─────────────────────────────────────────────────
