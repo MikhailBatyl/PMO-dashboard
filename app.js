@@ -38,7 +38,6 @@ async function loadData(forceRefresh = false) {
  */
 function renderAll() {
   renderKPI();
-  populateOwnerFilter();
   renderPortfolio();
   renderGantt(document.getElementById('gantt-container'), getFilteredItems());
   renderRisks();
