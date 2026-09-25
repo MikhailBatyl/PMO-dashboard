@@ -758,10 +758,10 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
 .cal-row-y { border-left: 4px solid var(--color-yellow); }
 .cal-row-g { border-left: 4px solid var(--color-green); }
 
-/* ── Ячейки месяцев (цветовая заливка по статусу) ── */
-.cal-cell-r { background: rgba(220, 38, 38, 0.07); }
-.cal-cell-y { background: rgba(217, 119, 6,  0.07); }
-.cal-cell-g { background: rgba(22,  163, 74,  0.06); }
+/* ── Ячейки месяцев — фон убран, подсветка только на строке ценности ── */
+.cal-cell-r { background: transparent; }
+.cal-cell-y { background: transparent; }
+.cal-cell-g { background: transparent; }
 
 /* ── Строка ценности внутри ячейки ── */
 .cal-task-line {
@@ -776,12 +776,11 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
 }
 .cal-task-line:last-child { margin-bottom: 0; }
 
-.cal-cell-r .cal-task-line { background: rgba(220,38,38,0.06); }
-.cal-cell-y .cal-task-line { background: rgba(217,119,6,0.06); }
-.cal-cell-g .cal-task-line { background: rgba(22,163,74,0.06); }
+.cal-cell-r .cal-task-line { background: rgba(220,38,38,0.10); }
+.cal-cell-y .cal-task-line { background: rgba(217,119,6,0.10); }
+.cal-cell-g .cal-task-line { background: rgba(22,163,74,0.10); }
 
-.cal-task-line.cal-task-done { opacity: 0.70; }
-.cal-task-line.cal-task-done .cal-task-nm { text-decoration: line-through; }
+.cal-task-line.cal-task-done { opacity: 0.75; }
 
 .cal-task-st {
   flex-shrink: 0;
