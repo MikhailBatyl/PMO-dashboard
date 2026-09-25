@@ -24,8 +24,8 @@
     </div>
 
     <nav class="nav-tabs">
-      <button class="nav-tab" data-tab="calendar"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="15" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="15" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/></svg> Календарь запуска</button>
-      <button class="nav-tab active" data-tab="portfolio"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="2" y1="12" x2="22" y2="12"/></svg> Портфель</button>
+      <button class="nav-tab active" data-tab="calendar"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="15" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="15" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/></svg> Календарь запуска</button>
+      <button class="nav-tab" data-tab="portfolio"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="2" y1="12" x2="22" y2="12"/></svg> Портфель</button>
       <button class="nav-tab" data-tab="gantt"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><rect x="6" y="14" width="7" height="3" rx="1" fill="currentColor" stroke="none"/><rect x="10" y="18" width="7" height="3" rx="1" fill="currentColor" stroke="none" y="18"/></svg> Гантт</button>
       <button class="nav-tab" data-tab="risks"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#e53e3e" stroke="#e53e3e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13" stroke="white" stroke-width="2.5"/><circle cx="12" cy="17" r="0.5" fill="white" stroke="white" stroke-width="2"/></svg> Риски</button>
     </nav>
@@ -34,7 +34,7 @@
   </header>
 
   <!-- ─── Панель фильтров (видна только на Портфеле и Гантте) ──── -->
-  <div id="filters-bar" class="filters-bar">
+  <div id="filters-bar" class="filters-bar hidden">
     <label>Тип:</label>
     <select id="filter-type">
       <option value="">Все типы</option>
@@ -60,7 +60,7 @@
   <main class="main-content">
 
     <!-- Экран: Портфель -->
-    <section id="screen-portfolio" class="screen">
+    <section id="screen-portfolio" class="screen hidden">
       <!-- KPI карточки -->
       <div class="kpi-grid">
         <div class="kpi-card">
@@ -123,7 +123,7 @@
     </section>
 
     <!-- Экран: Календарь запуска -->
-    <section id="screen-calendar" class="screen hidden">
+    <section id="screen-calendar" class="screen">
       <!-- Воронка портфеля (верхняя доска) -->
       <div id="funnel-board" class="funnel-board">
         <p class="no-data">Загрузка данных…</p>
