@@ -776,7 +776,7 @@ function renderLaunchGrid(container, items) {
 
           const lines = tasksInMonth.map(t => {
             const tl = t.timeline[m] || {};
-            const done = tl.plan && tl.fact;
+            const done = tl.plan && tl.fact && t.status === '🟢';
             const stColor = t.status === '🔴' ? 'cst-r' : t.status === '🟡' ? 'cst-y' : 'cst-g';
             return `<div class="cal-task-line${done ? ' cal-task-done' : ''}"
               data-task="${escHtml(t.task)}"
