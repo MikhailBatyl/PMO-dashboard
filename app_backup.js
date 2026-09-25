@@ -9,7 +9,6 @@ let activeTab = 'portfolio';  // текущий активный экран
 let filterType = '';          // фильтр по типу (Проект/Продукт)
 let filterOwner = '';         // фильтр по ответственному
 let filterStatus = '';        // фильтр по статусу
-let ganttFocusTask = null;    // задача для перехода в Гантт
 
 // ─── Инициализация ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
@@ -42,7 +41,6 @@ function renderAll() {
   renderPortfolio();
   renderGantt(document.getElementById('gantt-container'), getFilteredItems());
   renderRisks();
-  renderCalendar();
 }
 
 // ─── Навигация ────────────────────────────────────────────────────────────────
@@ -63,21 +61,18 @@ function setupNavigation() {
     renderPortfolio();
     renderGantt(document.getElementById('gantt-container'), getFilteredItems());
     renderRisks();
-    renderCalendar();
   });
   document.getElementById('filter-owner').addEventListener('change', e => {
     filterOwner = e.target.value;
     renderPortfolio();
     renderGantt(document.getElementById('gantt-container'), getFilteredItems());
     renderRisks();
-    renderCalendar();
   });
   document.getElementById('filter-status').addEventListener('change', e => {
     filterStatus = e.target.value;
     renderPortfolio();
     renderGantt(document.getElementById('gantt-container'), getFilteredItems());
     renderRisks();
-    renderCalendar();
   });
 }
 
@@ -248,41 +243,50 @@ function renderPortfolio() {
     <table class="portfolio-table">
       <thead>
         <tr>
-          <th>Тип / Наименование</th>
-          <th>Ценность</th>
+          <th>Тип / Наименование / Задача</th>
           <th>Отв. (PM)</th>
           <th>Приоритет</th>
           <th>Статус</th>
           <th>Тренд</th>
           <th>Ключевой риск</th>
-          <th>Период запуска</th>
+          <th>Причина отклонения</th>
         </tr>
       </thead>
       <tbody>
   `;
 
   items.forEach(item => {
-    // Цвет полосы по худшему статусу прикреплённых ценностей
-    const _allTasks = item.subgroups.flatMap(sg => sg.tasks);
-    const _hasRed    = _allTasks.some(t => t.status === '🔴');
-    const _hasYellow = _allTasks.some(t => t.status === '🟡');
-    const _headerColor = _hasRed ? 'header-red' : _hasYellow ? 'header-yellow' : 'header-green';
+    const hasRed = itemHasStatus(item, '🔴');
+    const isOpen = hasRed;
+    const groupId = `group-${item.id}`;
+    const s = getItemSummary(item);
+    const statusRowClass = s.overallStatus === '🔴' ? 'summary-red' : s.overallStatus === '🟡' ? 'summary-yellow' : '';
 
     html += `
-      <tr class="row-level1 row-project-header ${_headerColor}">
-        <td colspan="8">
+      <tr class="row-level1 ${statusRowClass} ${isOpen ? 'open' : 'closed'}" data-group="${groupId}" onclick="toggleGroup('${groupId}')">
+        <td>
+          <span class="toggle-icon">${isOpen ? '▼' : '▶'}</span>
           <span class="type-badge ${item.type === 'Проект' ? 'badge-project' : 'badge-product'}">${item.type}</span>
           <strong>${escHtml(item.name)}</strong>
           ${item.businessNote ? `<span class="biz-note">${item.businessNote.split(/\.\s+|\n/).filter(Boolean).map((s2,i,a) => escHtml(s2) + (i < a.length-1 ? '.' : '')).join('<br>')}</span>` : ''}
         </td>
+        <td class="summary-cell summary-pm">${s.pms.map(p => escHtml(p)).join('<br>') || '—'}</td>
+        <td class="summary-cell"><span class="prio-badge prio-${s.priorityLabel}">${s.priorityLabel}</span></td>
+        <td class="summary-cell" style="font-size:18px;text-align:center">${s.overallStatus}</td>
+        <td class="summary-cell" style="text-align:center">${s.overallTrend}</td>
+        <td class="summary-cell summary-text">${s.risks.map(r => escHtml(r)).join('<br>') || (s.overallStatus === '🟢' ? '—' : '')}</td>
+        <td class="summary-cell summary-text">${s.deviations.map(d => escHtml(d)).join('<br>') || (s.overallStatus === '🟢' ? '—' : '')}</td>
       </tr>
     `;
 
-    item.subgroups.forEach(sg => {
+    item.subgroups.forEach((sg, sgIdx) => {
+      const sgId = `${groupId}-sg${sgIdx}`;
+
       if (sg.subgroupName) {
         html += `
-          <tr class="row-level2">
-            <td colspan="8">
+          <tr class="row-level2 group-${groupId} ${isOpen ? '' : 'hidden'}" data-group="${sgId}" onclick="toggleGroup('${sgId}')">
+            <td colspan="7">
+              <span class="toggle-icon">▼</span>
               <span class="subgroup-label">${escHtml(sg.subgroupName)}</span>
             </td>
           </tr>
@@ -290,14 +294,12 @@ function renderPortfolio() {
       }
 
       sg.tasks.forEach(task => {
+        const parentClass = sg.subgroupName ? `group-${groupId} group-${sgId}` : `group-${groupId}`;
         html += `
-          <tr class="row-level3 ${statusToClass(task.status)}">
-            <td class="td-empty"></td>
-            <td class="task-name" data-tip-desc="${escHtml(task.description||'')}"
-                data-tip-kpi="${escHtml(task.kpi||'')}"
-                data-tip-task="${escHtml(task.task)}">${escHtml(task.task)}</td>
+          <tr class="row-level3 ${parentClass} ${isOpen ? '' : 'hidden'} ${statusToClass(task.status)}">
+            <td class="task-name">${escHtml(task.task)}</td>
             <td>${escHtml(task.owner)}</td>
-            <td><span class="prio-badge prio-${prioLabel(task.priority)}">${prioLabel(task.priority)}</span></td>
+            <td><span class="priority-badge">${task.priority || '—'}</span></td>
             <td>
               <span class="status-selector" data-task="${escHtml(task.task)}" data-field="status">
                 ${task.status}
@@ -313,8 +315,10 @@ function renderPortfolio() {
                 ${escHtml(task.risk)}
               </span>
             </td>
-            <td class="period-cell" data-task="${escHtml(task.task)}">
-              <span class="period-label">${getPeriodLabel(task.timeline)}</span>
+            <td>
+              <span class="editable-field" data-task="${escHtml(task.task)}" data-field="deviationReason">
+                ${escHtml(task.deviationReason)}
+              </span>
             </td>
           </tr>
         `;
@@ -325,8 +329,6 @@ function renderPortfolio() {
   html += `</tbody></table></div>`;
   container.innerHTML = html;
   attachEditHandlers(container);
-  attachTooltipHandlers(container);
-  attachPeriodHandlers(container);
 }
 
 /**
@@ -357,23 +359,18 @@ function toggleGroup(groupId) {
 }
 
 // ─── Инлайн-редактирование ────────────────────────────────────────────────────
-// ─── Приоритет: число → текст ────────────────────────────────────
-function prioLabel(p) {
-  if (p === 1) return 'Высокий';
-  if (p === 2) return 'Средний';
-  if (p != null && !isNaN(p) && p >= 3) return 'Низкий';
-  return '—';
-}
-
-
 function attachEditHandlers(container) {
-  // Клик по статусу → переход в Гантт для данной задачи
+  // Клик по статусу → циклическая смена
   container.querySelectorAll('.status-selector').forEach(el => {
     el.style.cursor = 'pointer';
-    el.title = 'Нажмите — открыть в Гантте';
-    el.addEventListener('click', e => {
+    el.title = 'Нажмите для смены статуса';
+    el.addEventListener('click', async e => {
       e.stopPropagation();
-      navigateToGanttTask(el.dataset.task);
+      const values = ['🟢', '🟡', '🔴'];
+      const cur = el.textContent.trim();
+      const next = values[(values.indexOf(cur) + 1) % values.length];
+      el.textContent = next;
+      await saveField(el.dataset.task, 'status', next);
     });
   });
 
@@ -431,116 +428,6 @@ async function saveField(taskName, field, value) {
   } catch (err) {
     showToast('Ошибка сохранения: ' + err.message, true);
   }
-}
-
-// ─── Навигация в Гантт по задаче ────────────────────────────────────
-function navigateToGanttTask(taskName) {
-  ganttFocusTask = taskName;
-  switchTab('gantt');
-  renderGantt(document.getElementById('gantt-container'), getFilteredItems());
-  setTimeout(() => {
-    const focused = document.querySelector('.gantt-focused');
-    if (focused) focused.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 120);
-}
-
-// ─── Всплывающие подсказки по ценностям ────────────────────────────
-function attachTooltipHandlers(container) {
-  const tooltip = document.getElementById('task-tooltip');
-  if (!tooltip) return;
-
-  container.querySelectorAll('td.task-name[data-tip-task]').forEach(el => {
-    const desc = el.dataset.tipDesc;
-    const kpi  = el.dataset.tipKpi;
-    const name = el.dataset.tipTask;
-    if (!desc && !kpi) return;
-
-    el.classList.add('has-tooltip');
-
-    el.addEventListener('mouseenter', e => {
-      tooltip.querySelector('.tooltip-title').textContent = name;
-      const descEl = tooltip.querySelector('.tooltip-desc');
-      const kpiEl  = tooltip.querySelector('.tooltip-kpi');
-      descEl.textContent = desc || '';
-      descEl.style.display = desc ? '' : 'none';
-      kpiEl.textContent = kpi ? 'КПЭ: ' + kpi : '';
-      kpiEl.style.display = kpi ? '' : 'none';
-      tooltip.classList.remove('hidden');
-      positionTooltip(e, tooltip);
-    });
-    el.addEventListener('mousemove', e => positionTooltip(e, tooltip));
-    el.addEventListener('mouseleave', () => tooltip.classList.add('hidden'));
-  });
-}
-
-function positionTooltip(e, tooltip) {
-  const x = e.clientX + 14, y = e.clientY + 14;
-  const w = tooltip.offsetWidth  || 280;
-  const h = tooltip.offsetHeight || 80;
-  tooltip.style.left = (x + w > window.innerWidth  ? x - w - 28 : x) + 'px';
-  tooltip.style.top  = (y + h > window.innerHeight ? y - h - 28 : y) + 'px';
-}
-
-// ─── Период запуска: вспомогательные функции ───────────────────────
-const MONTH_RU = {Sep:'Сен',Oct:'Окт',Nov:'Ноя',Dec:'Дек',
-  Jan:'Янв',Feb:'Фев',Mar:'Мар',Apr:'Апр',May:'Май',Jun:'Июн',Jul:'Июл',Aug:'Авг'};
-
-function formatMonth(m) {
-  const p = m.split('-');
-  return (MONTH_RU[p[0]] || p[0]) + '\'' + p[1];
-}
-
-function getPeriodLabel(timeline) {
-  const planMonths = Object.keys(timeline || {}).filter(m => timeline[m].plan);
-  if (!planMonths.length) return '—';
-  return formatMonth(planMonths[planMonths.length - 1]);
-}
-
-function buildPeriodGantt(task) {
-  const months = Object.keys(task.timeline || {});
-  if (!months.length) return '<p class="pg-nodata">Нет данных</p>';
-  const cols = months.map(m => {
-    const tl = task.timeline[m];
-    return `<div class="pg-col">
-      <div class="pg-mlbl">${formatMonth(m)}</div>
-      <div class="pg-bar pg-plan${tl.plan ? ' pg-on' : ''}"></div>
-      <div class="pg-bar pg-fact${tl.fact ? ' pg-on' : ''}"></div>
-    </div>`;
-  }).join('');
-  return `<div class="pg-title">${escHtml(task.task)}</div>
-    <div class="pg-grid">${cols}</div>
-    <div class="pg-legend">
-      <span class="pg-leg pg-plan-leg">▬ План</span>
-      <span class="pg-leg pg-fact-leg">▬ Факт</span>
-    </div>`;
-}
-
-function attachPeriodHandlers(container) {
-  const popup = document.getElementById('period-popup');
-  if (!popup) return;
-  container.querySelectorAll('td.period-cell[data-task]').forEach(el => {
-    el.addEventListener('mouseenter', e => {
-      const name = el.dataset.task;
-      let task = null;
-      if (appData) appData.items.forEach(it =>
-        it.subgroups.forEach(sg =>
-          sg.tasks.forEach(t => { if (t.task === name) task = t; })));
-      if (!task) return;
-      popup.innerHTML = buildPeriodGantt(task);
-      popup.classList.remove('hidden');
-      positionPeriodPopup(e, popup);
-    });
-    el.addEventListener('mousemove', e => positionPeriodPopup(e, popup));
-    el.addEventListener('mouseleave', () => popup.classList.add('hidden'));
-  });
-}
-
-function positionPeriodPopup(e, popup) {
-  const w = popup.offsetWidth || 380, h = popup.offsetHeight || 90;
-  const x = e.clientX - w / 2;
-  const y = e.clientY + 18;
-  popup.style.left = Math.max(8, Math.min(x, window.innerWidth - w - 8)) + 'px';
-  popup.style.top  = (y + h > window.innerHeight ? e.clientY - h - 12 : y) + 'px';
 }
 
 // ─── Экран Риски и отклонения ─────────────────────────────────────────────────
@@ -624,204 +511,3 @@ function showToast(msg, isError = false) {
   toastTimeout = setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// ─── Экран: Календарь запуска ─────────────────────────────────────────────────
-
-function renderCalendar() {
-  renderFunnelBoard(document.getElementById('funnel-board'));
-  renderLaunchGrid(document.getElementById('cal-grid'), getFilteredItems());
-}
-
-/**
- * Рисует верхнюю доску «Воронка портфеля + Здоровье»
- */
-function renderFunnelBoard(container) {
-  if (!appData || !container) return;
-  const allItems = appData.items;
-
-  let projCount = 0, prodCount = 0;
-  let gTask = 0, yTask = 0, rTask = 0;
-  const iStat = { proj: { g: 0, y: 0, r: 0 }, prod: { g: 0, y: 0, r: 0 } };
-
-  allItems.forEach(item => {
-    const tasks = item.subgroups.flatMap(sg => sg.tasks);
-    const hasR  = tasks.some(t => t.status === '🔴');
-    const hasY  = tasks.some(t => t.status === '🟡');
-    const key   = item.type === 'Проект' ? 'proj' : 'prod';
-
-    if (item.type === 'Проект') projCount++; else prodCount++;
-    if (hasR) iStat[key].r++;
-    else if (hasY) iStat[key].y++;
-    else iStat[key].g++;
-
-    tasks.forEach(t => {
-      if (t.status === '🟢') gTask++;
-      else if (t.status === '🟡') yTask++;
-      else if (t.status === '🔴') rTask++;
-    });
-  });
-
-  const total    = gTask + yTask + rTask;
-  const gPct     = total ? Math.round(gTask / total * 100) : 0;
-  const yPct     = total ? Math.round(yTask / total * 100) : 0;
-  const rPct     = total ? Math.round(rTask / total * 100) : 0;
-  const totItems = projCount + prodCount;
-
-  const dotHtml = (s) => [
-    s.g ? `<span class="fb-dot fb-g">🟢 ${s.g}</span>` : '',
-    s.y ? `<span class="fb-dot fb-y">🟡 ${s.y}</span>` : '',
-    s.r ? `<span class="fb-dot fb-r">🔴 ${s.r}</span>` : '',
-  ].filter(Boolean).join('');
-
-  container.innerHTML = `
-    <div class="fb-inner">
-
-      <!-- ВОРОНКА -->
-      <div class="fb-section">
-        <div class="fb-title">Воронка портфеля</div>
-        <div class="fb-flow">
-          <div class="fb-node fb-node-total">
-            <div class="fb-num">${totItems}</div>
-            <div class="fb-lbl">В портфеле</div>
-          </div>
-          <div class="fb-arrow">▶</div>
-          <div class="fb-node fb-node-proj">
-            <div class="fb-num">${projCount}</div>
-            <div class="fb-lbl">Проектов</div>
-            <div class="fb-dots">${dotHtml(iStat.proj)}</div>
-          </div>
-          <div class="fb-plus">+</div>
-          <div class="fb-node fb-node-prod">
-            <div class="fb-num">${prodCount}</div>
-            <div class="fb-lbl">Продуктов</div>
-            <div class="fb-dots">${dotHtml(iStat.prod)}</div>
-          </div>
-          <div class="fb-arrow">▶</div>
-          <div class="fb-node fb-node-vals">
-            <div class="fb-num">${total}</div>
-            <div class="fb-lbl">Ценностей</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="fb-divider"></div>
-
-      <!-- ЗДОРОВЬЕ -->
-      <div class="fb-section">
-        <div class="fb-title">Здоровье портфеля</div>
-        <div class="fb-health-cards">
-          <div class="fb-hcard fb-hcard-g">
-            <span class="fb-hnum">${gTask}</span>
-            <span class="fb-hpct">${gPct}%</span>
-            <span class="fb-hlbl">🟢 В норме</span>
-          </div>
-          <div class="fb-hcard fb-hcard-y">
-            <span class="fb-hnum">${yTask}</span>
-            <span class="fb-hpct">${yPct}%</span>
-            <span class="fb-hlbl">🟡 Контроль</span>
-          </div>
-          <div class="fb-hcard fb-hcard-r">
-            <span class="fb-hnum">${rTask}</span>
-            <span class="fb-hpct">${rPct}%</span>
-            <span class="fb-hlbl">🔴 Критично</span>
-          </div>
-        </div>
-        <div class="fb-bar">
-          <div class="fb-seg fb-seg-g" style="flex:${gTask || 0}" title="В норме: ${gTask} (${gPct}%)"></div>
-          <div class="fb-seg fb-seg-y" style="flex:${yTask || 0}" title="Контроль: ${yTask} (${yPct}%)"></div>
-          <div class="fb-seg fb-seg-r" style="flex:${rTask || 0}" title="Критично: ${rTask} (${rPct}%)"></div>
-        </div>
-        <div class="fb-bar-labels">
-          <span style="color:var(--color-green)">${gPct}% В норме</span>
-          <span style="color:var(--color-yellow)">${yPct}% Контроль</span>
-          <span style="color:var(--color-red)">${rPct}% Критично</span>
-        </div>
-      </div>
-
-    </div>
-  `;
-}
-
-/**
- * Рисует сетку запусков по месяцам (строка = проект/продукт, колонка = месяц)
- */
-function renderLaunchGrid(container, items) {
-  if (!container) return;
-  if (!items || !items.length) {
-    container.innerHTML = '<p class="no-data">Нет данных по выбранным фильтрам</p>';
-    return;
-  }
-
-  // Собираем все месяцы из полного датасета (для стабильных столбцов)
-  const months = [];
-  const seenM  = new Set();
-  (appData ? appData.items : items).forEach(item =>
-    item.subgroups.forEach(sg =>
-      sg.tasks.forEach(t =>
-        Object.keys(t.timeline).forEach(m => {
-          if (!seenM.has(m)) { seenM.add(m); months.push(m); }
-        })
-      )
-    )
-  );
-
-  let html = `
-    <div class="cal-header-row">
-      <span class="cal-section-title">Запуски по месяцам</span>
-      <div class="cal-legend">
-        <span class="cal-leg"><span class="cal-lb cal-lb-plan"></span>Запланировано</span>
-        <span class="cal-leg"><span class="cal-lb cal-lb-done"></span>Выполнено</span>
-        <span class="cal-leg"><span class="cal-lb cal-lb-part"></span>Частично</span>
-      </div>
-    </div>
-    <div class="cal-table-wrap">
-      <table class="cal-table">
-        <thead>
-          <tr>
-            <th class="cal-th cal-th-name">Наименование</th>
-            <th class="cal-th cal-th-cnt">Ценностей</th>
-            <th class="cal-th cal-th-st">Статус</th>
-            ${months.map(m => `<th class="cal-th cal-th-m">${formatMonth(m)}</th>`).join('')}
-          </tr>
-        </thead>
-        <tbody>
-  `;
-
-  items.forEach(item => {
-    const allTasks = item.subgroups.flatMap(sg => sg.tasks);
-    const hasR     = allTasks.some(t => t.status === '🔴');
-    const hasY     = allTasks.some(t => t.status === '🟡');
-    const overallSt = hasR ? '🔴' : hasY ? '🟡' : '🟢';
-    const rowCls   = hasR ? 'cal-row-r' : hasY ? 'cal-row-y' : 'cal-row-g';
-
-    html += `
-      <tr class="cal-item-row ${rowCls}">
-        <td class="cal-td cal-td-name">
-          <span class="type-badge ${item.type === 'Проект' ? 'badge-project' : 'badge-product'}">${item.type}</span>
-          <strong>${escHtml(item.name)}</strong>
-          ${item.businessNote ? `<span class="cal-biz-note">${escHtml(item.businessNote.split(/\.\s+|\n/)[0])}</span>` : ''}
-        </td>
-        <td class="cal-td cal-td-cnt">${allTasks.length}</td>
-        <td class="cal-td cal-td-st">${overallSt}</td>
-        ${months.map(m => {
-          let plan = 0, fact = 0;
-          allTasks.forEach(t => {
-            const tl = t.timeline[m] || {};
-            if (tl.plan) plan++;
-            if (tl.fact) fact++;
-          });
-          if (!plan && !fact) return `<td class="cal-td cal-td-m"></td>`;
-
-          let cls = 'cal-m-plan', txt = `○ ${plan}`;
-          if (plan && fact >= plan) { cls = 'cal-m-done'; txt = `✓ ${fact}`; }
-          else if (plan && fact > 0) { cls = 'cal-m-part'; txt = `${fact}/${plan}`; }
-          else if (!plan && fact)    { cls = 'cal-m-extra'; txt = `+ ${fact}`; }
-
-          return `<td class="cal-td cal-td-m ${cls}" title="Факт: ${fact} / План: ${plan}">${txt}</td>`;
-        }).join('')}
-      </tr>
-    `;
-  });
-
-  html += `</tbody></table></div>`;
-  container.innerHTML = html;
-}
