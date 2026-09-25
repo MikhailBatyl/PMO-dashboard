@@ -688,6 +688,7 @@ function renderFunnelBoard(container) {
 
 /**
  * Рисует сетку запусков по месяцам (строка = проект/продукт, колонка = месяц)
+ * Ячейка месяца: список ценностей со светофором и цветовой заливкой по статусу
  */
 function renderLaunchGrid(container, items) {
   if (!container) return;
@@ -696,7 +697,7 @@ function renderLaunchGrid(container, items) {
     return;
   }
 
-  // Собираем все месяцы из полного датасета (для стабильных столбцов)
+  // Собираем все месяцы из полного датасета
   const months = [];
   const seenM  = new Set();
   (appData ? appData.items : items).forEach(item =>
@@ -713,9 +714,10 @@ function renderLaunchGrid(container, items) {
     <div class="cal-header-row">
       <span class="cal-section-title">Запуски по месяцам</span>
       <div class="cal-legend">
-        <span class="cal-leg"><span class="cal-lb cal-lb-plan"></span>Запланировано</span>
-        <span class="cal-leg"><span class="cal-lb cal-lb-done"></span>Выполнено</span>
-        <span class="cal-leg"><span class="cal-lb cal-lb-part"></span>Частично</span>
+        <span class="cal-leg"><span class="cal-lb" style="background:rgba(220,38,38,0.18)"></span>Критично</span>
+        <span class="cal-leg"><span class="cal-lb" style="background:rgba(217,119,6,0.18)"></span>Контроль</span>
+        <span class="cal-leg"><span class="cal-lb" style="background:rgba(22,163,74,0.14)"></span>В норме</span>
+        <span class="cal-leg"><span class="cal-lb cal-lb-done"></span>Выполнено ✓</span>
       </div>
     </div>
     <div class="cal-table-wrap">
@@ -723,8 +725,7 @@ function renderLaunchGrid(container, items) {
         <thead>
           <tr>
             <th class="cal-th cal-th-name">Наименование</th>
-            <th class="cal-th cal-th-cnt">Ценностей</th>
-            <th class="cal-th cal-th-st">Статус</th>
+            <th class="cal-th cal-th-cnt">Всего</th>
             ${months.map(m => `<th class="cal-th cal-th-m">${formatMonth(m)}</th>`).join('')}
           </tr>
         </thead>
@@ -733,10 +734,9 @@ function renderLaunchGrid(container, items) {
 
   items.forEach(item => {
     const allTasks = item.subgroups.flatMap(sg => sg.tasks);
-    const hasR     = allTasks.some(t => t.status === '🔴');
-    const hasY     = allTasks.some(t => t.status === '🟡');
-    const overallSt = hasR ? '🔴' : hasY ? '🟡' : '🟢';
-    const rowCls   = hasR ? 'cal-row-r' : hasY ? 'cal-row-y' : 'cal-row-g';
+    const hasR = allTasks.some(t => t.status === '🔴');
+    const hasY = allTasks.some(t => t.status === '🟡');
+    const rowCls = hasR ? 'cal-row-r' : hasY ? 'cal-row-y' : 'cal-row-g';
 
     html += `
       <tr class="cal-item-row ${rowCls}">
@@ -746,22 +746,31 @@ function renderLaunchGrid(container, items) {
           ${item.businessNote ? `<span class="cal-biz-note">${escHtml(item.businessNote.split(/\.\s+|\n/)[0])}</span>` : ''}
         </td>
         <td class="cal-td cal-td-cnt">${allTasks.length}</td>
-        <td class="cal-td cal-td-st">${overallSt}</td>
         ${months.map(m => {
-          let plan = 0, fact = 0;
-          allTasks.forEach(t => {
+          // Задачи с планом или фактом в этом месяце
+          const tasksInMonth = allTasks.filter(t => {
             const tl = t.timeline[m] || {};
-            if (tl.plan) plan++;
-            if (tl.fact) fact++;
+            return tl.plan || tl.fact;
           });
-          if (!plan && !fact) return `<td class="cal-td cal-td-m"></td>`;
 
-          let cls = 'cal-m-plan', txt = `○ ${plan}`;
-          if (plan && fact >= plan) { cls = 'cal-m-done'; txt = `✓ ${fact}`; }
-          else if (plan && fact > 0) { cls = 'cal-m-part'; txt = `${fact}/${plan}`; }
-          else if (!plan && fact)    { cls = 'cal-m-extra'; txt = `+ ${fact}`; }
+          if (!tasksInMonth.length) return `<td class="cal-td cal-td-m cal-td-empty"></td>`;
 
-          return `<td class="cal-td cal-td-m ${cls}" title="Факт: ${fact} / План: ${plan}">${txt}</td>`;
+          // Цвет ячейки по наихудшему статусу
+          const cHasR = tasksInMonth.some(t => t.status === '🔴');
+          const cHasY = tasksInMonth.some(t => t.status === '🟡');
+          const cellCls = cHasR ? 'cal-cell-r' : cHasY ? 'cal-cell-y' : 'cal-cell-g';
+
+          const lines = tasksInMonth.map(t => {
+            const tl = t.timeline[m] || {};
+            const done = tl.plan && tl.fact;
+            const stColor = t.status === '🔴' ? 'cst-r' : t.status === '🟡' ? 'cst-y' : 'cst-g';
+            return `<div class="cal-task-line${done ? ' cal-task-done' : ''}">
+              <span class="cal-task-st ${stColor}">${t.status}</span>
+              <span class="cal-task-nm">${escHtml(t.task)}${done ? ' <span class="cal-check">✓</span>' : ''}</span>
+            </div>`;
+          }).join('');
+
+          return `<td class="cal-td cal-td-m ${cellCls}">${lines}</td>`;
         }).join('')}
       </tr>
     `;

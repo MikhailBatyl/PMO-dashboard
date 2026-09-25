@@ -706,7 +706,7 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
 .cal-lb-done { background: rgba(22, 163, 74, 0.50); }
 .cal-lb-part { background: rgba(217, 119, 6, 0.40); }
 
-/* ── Таблица ── */
+/* ─── Таблица ── */
 .cal-table-wrap {
   overflow-x: auto;
   border-radius: var(--radius);
@@ -723,42 +723,91 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
 .cal-th {
   background: var(--color-surface2);
   color: var(--color-text-muted);
-  padding: 9px 12px;
-  border-bottom: 1px solid var(--color-border);
+  padding: 9px 10px;
+  border-bottom: 2px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
+  text-align: left;
 }
 
-.cal-th-name { text-align: left; min-width: 240px; }
-.cal-th-cnt, .cal-th-st { text-align: center; width: 64px; }
-.cal-th-m { text-align: center; min-width: 84px; }
+.cal-th-name { min-width: 200px; width: 200px; }
+.cal-th-cnt  { text-align: center; width: 52px; padding: 9px 6px; }
+.cal-th-m    { min-width: 140px; }
 
 .cal-td {
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-bottom: 1px solid var(--color-border);
-  vertical-align: middle;
+  border-right: 1px solid var(--color-border);
+  vertical-align: top;
 }
 
-.cal-td-name { min-width: 240px; }
-.cal-td-cnt  { text-align: center; color: var(--color-text-muted); font-size: 13px; font-weight: 600; }
-.cal-td-st   { text-align: center; font-size: 16px; }
-.cal-td-m    { text-align: center; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.cal-td-name { min-width: 200px; width: 200px; vertical-align: middle; }
+.cal-td-cnt  { text-align: center; width: 52px; font-size: 13px; font-weight: 700;
+               color: var(--color-text-muted); vertical-align: middle; }
+.cal-td-m    { padding: 5px 8px !important; min-width: 140px; }
+.cal-td-empty { background: transparent !important; }
 
-.cal-item-row { transition: background 0.15s; }
-.cal-item-row:hover { background: #f8fafc; }
+.cal-item-row { transition: filter 0.15s; }
+.cal-item-row:hover { filter: brightness(0.97); }
 
 .cal-row-r { border-left: 4px solid var(--color-red); }
 .cal-row-y { border-left: 4px solid var(--color-yellow); }
 .cal-row-g { border-left: 4px solid var(--color-green); }
 
-/* ── Ячейки месяцев ── */
-.cal-m-plan  { background: rgba(37,99,235,0.09);  color: #2563eb; }
-.cal-m-done  { background: rgba(22,163,74,0.11);  color: var(--color-green); }
-.cal-m-part  { background: rgba(217,119,6,0.10);  color: var(--color-yellow); }
-.cal-m-extra { background: rgba(100,116,139,0.07); color: var(--color-text-muted); }
+/* ── Ячейки месяцев (цветовая заливка по статусу) ── */
+.cal-cell-r { background: rgba(220, 38, 38, 0.07); }
+.cal-cell-y { background: rgba(217, 119, 6,  0.07); }
+.cal-cell-g { background: rgba(22,  163, 74,  0.06); }
+
+/* ── Строка ценности внутри ячейки ── */
+.cal-task-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 3px 4px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.cal-task-line:last-child { margin-bottom: 0; }
+
+.cal-cell-r .cal-task-line { background: rgba(220,38,38,0.06); }
+.cal-cell-y .cal-task-line { background: rgba(217,119,6,0.06); }
+.cal-cell-g .cal-task-line { background: rgba(22,163,74,0.06); }
+
+.cal-task-line.cal-task-done { opacity: 0.70; }
+.cal-task-line.cal-task-done .cal-task-nm { text-decoration: line-through; }
+
+.cal-task-st {
+  flex-shrink: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  margin-top: 0;
+}
+
+/* Цветной фон под эмодзи статуса */
+.cst-r { background: rgba(220,38,38,0.12); border-radius: 3px; padding: 0 2px; }
+.cst-y { background: rgba(217,119,6,0.12);  border-radius: 3px; padding: 0 2px; }
+.cst-g { background: rgba(22,163,74,0.12);  border-radius: 3px; padding: 0 2px; }
+
+.cal-task-nm {
+  color: var(--color-text);
+  font-size: 11px;
+  font-weight: 500;
+  word-break: break-word;
+  flex: 1;
+}
+
+.cal-check {
+  color: var(--color-green);
+  font-weight: 700;
+  margin-left: 3px;
+}
 
 .cal-biz-note {
   display: block;
@@ -770,5 +819,5 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 320px;
+  max-width: 240px;
 }
