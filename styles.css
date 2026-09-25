@@ -721,6 +721,7 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
 
 .cal-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 13px;
   background: var(--color-surface);
@@ -737,24 +738,26 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
+  overflow: hidden;
   text-align: left;
 }
 
-.cal-th-name { min-width: 200px; width: 200px; }
-.cal-th-cnt  { text-align: center; width: 80px; min-width: 80px; padding: 9px 8px; white-space: nowrap; }
-.cal-th-m    { min-width: 140px; }
+.cal-th-name { width: 180px; }
+.cal-th-cnt  { text-align: center; width: 70px; padding: 9px 6px; white-space: nowrap; }
+.cal-th-m    { /* равномерно распределяется по оставшемуся месту */ }
 
 .cal-td {
   padding: 8px 10px;
   border-bottom: 1px solid var(--color-border);
   border-right: 1px solid var(--color-border);
   vertical-align: top;
+  overflow: hidden;
 }
 
-.cal-td-name { min-width: 200px; width: 200px; vertical-align: middle; }
-.cal-td-cnt  { text-align: center; width: 80px; min-width: 80px; font-size: 13px; font-weight: 700;
+.cal-td-name { width: 180px; vertical-align: middle; overflow: hidden; }
+.cal-td-cnt  { text-align: center; width: 70px; font-size: 13px; font-weight: 700;
                color: var(--color-text-muted); vertical-align: middle; white-space: nowrap; }
-.cal-td-m    { padding: 5px 8px !important; min-width: 140px; }
+.cal-td-m    { padding: 5px 8px !important; }
 .cal-td-empty { background: transparent !important; }
 
 .cal-item-row { transition: filter 0.15s; }
@@ -772,13 +775,15 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
 /* ── Строка ценности внутри ячейки ── */
 .cal-task-line {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 5px;
   padding: 3px 4px;
   border-radius: 4px;
   margin-bottom: 2px;
   font-size: 11px;
   line-height: 1.4;
+  min-width: 0;
+  overflow: hidden;
 }
 .cal-task-line:last-child { margin-bottom: 0; }
 
@@ -801,17 +806,29 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
 .cst-g { background: rgba(22,163,74,0.12);  border-radius: 3px; padding: 0 2px; }
 
 .cal-task-nm {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--color-text);
   font-size: 11px;
   font-weight: 500;
-  word-break: break-word;
-  flex: 1;
+  cursor: help;
 }
 
 .cal-check {
   color: var(--color-green);
   font-weight: 700;
   margin-left: 3px;
+  flex-shrink: 0;
+}
+
+.cal-td-name strong {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cal-biz-note {
@@ -821,8 +838,7 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
   font-weight: 400;
   font-style: italic;
   margin-top: 2px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 240px;
 }
