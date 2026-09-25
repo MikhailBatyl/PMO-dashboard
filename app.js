@@ -56,29 +56,6 @@ function setupNavigation() {
 
   // Кнопка обновления данных
   document.getElementById('btn-refresh').addEventListener('click', () => loadData(true));
-
-  // Фильтры
-  document.getElementById('filter-type').addEventListener('change', e => {
-    filterType = e.target.value;
-    renderPortfolio();
-    renderGantt(document.getElementById('gantt-container'), getFilteredItems());
-    renderRisks();
-    renderCalendar();
-  });
-  document.getElementById('filter-owner').addEventListener('change', e => {
-    filterOwner = e.target.value;
-    renderPortfolio();
-    renderGantt(document.getElementById('gantt-container'), getFilteredItems());
-    renderRisks();
-    renderCalendar();
-  });
-  document.getElementById('filter-status').addEventListener('change', e => {
-    filterStatus = e.target.value;
-    renderPortfolio();
-    renderGantt(document.getElementById('gantt-container'), getFilteredItems());
-    renderRisks();
-    renderCalendar();
-  });
 }
 
 function switchTab(tab) {
