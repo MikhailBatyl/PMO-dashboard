@@ -632,6 +632,7 @@ function showToast(msg, isError = false) {
 function renderCalendar() {
   renderFunnelBoard(document.getElementById('funnel-board'));
   renderLaunchGrid(document.getElementById('cal-grid'), getFilteredItems());
+  attachCalendarTooltips(document.getElementById('cal-grid'));
 }
 
 /**
@@ -697,18 +698,19 @@ function renderLaunchGrid(container, items) {
     return;
   }
 
-  // Собираем все месяцы из полного датасета
-  const months = [];
+  // Собираем месяцы из полного датасета, затем дополняем до 8
+  const rawMonths = [];
   const seenM  = new Set();
   (appData ? appData.items : items).forEach(item =>
     item.subgroups.forEach(sg =>
       sg.tasks.forEach(t =>
         Object.keys(t.timeline).forEach(m => {
-          if (!seenM.has(m)) { seenM.add(m); months.push(m); }
+          if (!seenM.has(m)) { seenM.add(m); rawMonths.push(m); }
         })
       )
     )
   );
+  const months = padToEightMonths(rawMonths);
 
   let html = `
     <div class="cal-header-row">
@@ -776,7 +778,11 @@ function renderLaunchGrid(container, items) {
             const tl = t.timeline[m] || {};
             const done = tl.plan && tl.fact;
             const stColor = t.status === '🔴' ? 'cst-r' : t.status === '🟡' ? 'cst-y' : 'cst-g';
-            return `<div class="cal-task-line${done ? ' cal-task-done' : ''}">
+            return `<div class="cal-task-line${done ? ' cal-task-done' : ''}"
+              data-task="${escHtml(t.task)}"
+              data-desc="${escHtml(t.description || '')}"
+              data-owner="${escHtml(t.owner || '')}"
+              data-risk="${escHtml(t.risk && t.risk !== '-' ? t.risk : '')}">
               <span class="cal-task-st ${stColor}">${t.status}</span>
               <span class="cal-task-nm">${escHtml(t.task)}${done ? ' <span class="cal-check">✓</span>' : ''}</span>
             </div>`;
@@ -790,4 +796,53 @@ function renderLaunchGrid(container, items) {
 
   html += `</tbody></table></div>`;
   container.innerHTML = html;
+}
+
+// ─── Вспомогательная: дополнить список месяцев до 8 ──────────────────────────
+function padToEightMonths(months) {
+  const SEQ = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const result = [...months];
+  while (result.length < 8) {
+    const last  = result[result.length - 1];
+    const parts = last.split('-');
+    const mIdx  = SEQ.indexOf(parts[0]);
+    const nextM = SEQ[(mIdx + 1) % 12];
+    const nextY = mIdx === 11 ? String(parseInt(parts[1]) + 1) : parts[1];
+    result.push(nextM + '-' + nextY);
+  }
+  return result;
+}
+
+// ─── Тултипы КПЭ на ценностях в календаре ────────────────────────────────────
+function attachCalendarTooltips(container) {
+  if (!container) return;
+  const tooltip = document.getElementById('task-tooltip');
+  if (!tooltip) return;
+
+  container.querySelectorAll('.cal-task-line[data-task]').forEach(el => {
+    el.style.cursor = 'help';
+
+    el.addEventListener('mouseenter', e => {
+      const name  = el.dataset.task  || '';
+      const desc  = el.dataset.desc  || '';
+      const owner = el.dataset.owner || '';
+      const risk  = el.dataset.risk  || '';
+
+      tooltip.querySelector('.tooltip-title').textContent = name;
+
+      const descEl = tooltip.querySelector('.tooltip-desc');
+      const rows = [];
+      if (desc)  rows.push(`<div class="tip-row"><span class="tip-lbl">КПЭ:</span> ${escHtml(desc)}</div>`);
+      if (owner) rows.push(`<div class="tip-row"><span class="tip-lbl">Отв.:</span> ${escHtml(owner)}</div>`);
+      if (risk)  rows.push(`<div class="tip-row tip-risk"><span class="tip-lbl">⚠️ Риск:</span> ${escHtml(risk)}</div>`);
+      descEl.innerHTML = rows.join('');
+      descEl.style.display = rows.length ? '' : 'none';
+
+      tooltip.querySelector('.tooltip-kpi').style.display = 'none';
+      tooltip.classList.remove('hidden');
+      positionTooltip(e, tooltip);
+    });
+    el.addEventListener('mousemove', e => positionTooltip(e, tooltip));
+    el.addEventListener('mouseleave', () => tooltip.classList.add('hidden'));
+  });
 }
