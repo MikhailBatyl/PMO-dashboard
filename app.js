@@ -725,7 +725,7 @@ function renderLaunchGrid(container, items) {
         <thead>
           <tr>
             <th class="cal-th cal-th-name">Наименование</th>
-            <th class="cal-th cal-th-cnt">Всего</th>
+            <th class="cal-th cal-th-cnt">Ценностей</th>
             ${months.map(m => `<th class="cal-th cal-th-m">${formatMonth(m)}</th>`).join('')}
           </tr>
         </thead>
@@ -738,6 +738,21 @@ function renderLaunchGrid(container, items) {
     const hasY = allTasks.some(t => t.status === '🟡');
     const rowCls = hasR ? 'cal-row-r' : hasY ? 'cal-row-y' : 'cal-row-g';
 
+    // Для каждой задачи определяем её «последний месяц запуска»
+    // (последний месяц с планом; если плана нет — последний с фактом)
+    const taskLaunchMonth = new Map();
+    allTasks.forEach(t => {
+      const planMonths = months.filter(m => (t.timeline[m] || {}).plan);
+      if (planMonths.length) {
+        taskLaunchMonth.set(t.task, planMonths[planMonths.length - 1]);
+        return;
+      }
+      const factMonths = months.filter(m => (t.timeline[m] || {}).fact);
+      if (factMonths.length) {
+        taskLaunchMonth.set(t.task, factMonths[factMonths.length - 1]);
+      }
+    });
+
     html += `
       <tr class="cal-item-row ${rowCls}">
         <td class="cal-td cal-td-name">
@@ -747,11 +762,8 @@ function renderLaunchGrid(container, items) {
         </td>
         <td class="cal-td cal-td-cnt">${allTasks.length}</td>
         ${months.map(m => {
-          // Задачи с планом или фактом в этом месяце
-          const tasksInMonth = allTasks.filter(t => {
-            const tl = t.timeline[m] || {};
-            return tl.plan || tl.fact;
-          });
+          // Только задачи, чей последний плановый месяц — именно этот
+          const tasksInMonth = allTasks.filter(t => taskLaunchMonth.get(t.task) === m);
 
           if (!tasksInMonth.length) return `<td class="cal-td cal-td-m cal-td-empty"></td>`;
 

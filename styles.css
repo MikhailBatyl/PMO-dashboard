@@ -735,7 +735,7 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
 }
 
 .cal-th-name { min-width: 200px; width: 200px; }
-.cal-th-cnt  { text-align: center; width: 52px; padding: 9px 6px; }
+.cal-th-cnt  { text-align: center; width: 80px; min-width: 80px; padding: 9px 8px; white-space: nowrap; }
 .cal-th-m    { min-width: 140px; }
 
 .cal-td {
@@ -746,8 +746,8 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
 }
 
 .cal-td-name { min-width: 200px; width: 200px; vertical-align: middle; }
-.cal-td-cnt  { text-align: center; width: 52px; font-size: 13px; font-weight: 700;
-               color: var(--color-text-muted); vertical-align: middle; }
+.cal-td-cnt  { text-align: center; width: 80px; min-width: 80px; font-size: 13px; font-weight: 700;
+               color: var(--color-text-muted); vertical-align: middle; white-space: nowrap; }
 .cal-td-m    { padding: 5px 8px !important; min-width: 140px; }
 .cal-td-empty { background: transparent !important; }
 
