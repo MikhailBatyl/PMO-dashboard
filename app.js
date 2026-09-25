@@ -784,7 +784,7 @@ function renderLaunchGrid(container, items) {
               data-owner="${escHtml(t.owner || '')}"
               data-risk="${escHtml(t.risk && t.risk !== '-' ? t.risk : '')}">
               <span class="cal-task-st ${stColor}">${t.status}</span>
-              <span class="cal-task-nm">${escHtml(t.task)}${done ? ' <span class="cal-check">✓</span>' : ''}</span>
+              <span class="cal-task-nm">${done ? '<span class="cal-check">✓ </span>' : ''}${escHtml(t.task)}</span>
             </div>`;
           }).join('');
 
