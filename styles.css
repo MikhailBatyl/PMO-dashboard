@@ -742,7 +742,7 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
   text-align: left;
 }
 
-.cal-th-name { width: 180px; }
+.cal-th-name { width: 200px; }
 .cal-th-cnt  { text-align: center; width: 70px; padding: 9px 6px; white-space: nowrap; }
 .cal-th-m    { /* равномерно распределяется по оставшемуся месту */ }
 
@@ -754,7 +754,7 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
   overflow: hidden;
 }
 
-.cal-td-name { width: 180px; vertical-align: middle; overflow: hidden; }
+.cal-td-name { width: 200px; vertical-align: middle; overflow: visible; word-break: break-word; }
 .cal-td-cnt  { text-align: center; width: 70px; font-size: 13px; font-weight: 700;
                color: var(--color-text-muted); vertical-align: middle; white-space: nowrap; }
 .cal-td-m    { padding: 5px 8px !important; }
@@ -824,11 +824,11 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
   flex-shrink: 0;
 }
 
+/* Название проекта/продукта — полностью, без сокращений */
 .cal-td-name strong {
   display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .cal-biz-note {
@@ -838,7 +838,6 @@ td.has-tooltip:hover { background: rgba(37,99,235,0.04); }
   font-weight: 400;
   font-style: italic;
   margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
 }
