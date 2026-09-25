@@ -632,111 +632,53 @@ function renderCalendar() {
 }
 
 /**
- * Рисует верхнюю доску «Воронка портфеля + Здоровье»
+ * Рисует верхнюю доску — те же KPI-карточки, что и на вкладке «Портфель»
  */
 function renderFunnelBoard(container) {
   if (!appData || !container) return;
-  const allItems = appData.items;
+  const items = appData.items;
 
   let projCount = 0, prodCount = 0;
-  let gTask = 0, yTask = 0, rTask = 0;
-  const iStat = { proj: { g: 0, y: 0, r: 0 }, prod: { g: 0, y: 0, r: 0 } };
+  let gTask = 0, yTask = 0, rTask = 0, totalTasks = 0;
 
-  allItems.forEach(item => {
-    const tasks = item.subgroups.flatMap(sg => sg.tasks);
-    const hasR  = tasks.some(t => t.status === '🔴');
-    const hasY  = tasks.some(t => t.status === '🟡');
-    const key   = item.type === 'Проект' ? 'proj' : 'prod';
-
+  items.forEach(item => {
     if (item.type === 'Проект') projCount++; else prodCount++;
-    if (hasR) iStat[key].r++;
-    else if (hasY) iStat[key].y++;
-    else iStat[key].g++;
-
-    tasks.forEach(t => {
-      if (t.status === '🟢') gTask++;
-      else if (t.status === '🟡') yTask++;
-      else if (t.status === '🔴') rTask++;
+    item.subgroups.forEach(sg => {
+      sg.tasks.forEach(t => {
+        totalTasks++;
+        if (t.status === '🟢') gTask++;
+        else if (t.status === '🟡') yTask++;
+        else if (t.status === '🔴') rTask++;
+      });
     });
   });
 
-  const total    = gTask + yTask + rTask;
-  const gPct     = total ? Math.round(gTask / total * 100) : 0;
-  const yPct     = total ? Math.round(yTask / total * 100) : 0;
-  const rPct     = total ? Math.round(rTask / total * 100) : 0;
-  const totItems = projCount + prodCount;
-
-  const dotHtml = (s) => [
-    s.g ? `<span class="fb-dot fb-g">🟢 ${s.g}</span>` : '',
-    s.y ? `<span class="fb-dot fb-y">🟡 ${s.y}</span>` : '',
-    s.r ? `<span class="fb-dot fb-r">🔴 ${s.r}</span>` : '',
-  ].filter(Boolean).join('');
-
   container.innerHTML = `
-    <div class="fb-inner">
-
-      <!-- ВОРОНКА -->
-      <div class="fb-section">
-        <div class="fb-title">Воронка портфеля</div>
-        <div class="fb-flow">
-          <div class="fb-node fb-node-total">
-            <div class="fb-num">${totItems}</div>
-            <div class="fb-lbl">В портфеле</div>
-          </div>
-          <div class="fb-arrow">▶</div>
-          <div class="fb-node fb-node-proj">
-            <div class="fb-num">${projCount}</div>
-            <div class="fb-lbl">Проектов</div>
-            <div class="fb-dots">${dotHtml(iStat.proj)}</div>
-          </div>
-          <div class="fb-plus">+</div>
-          <div class="fb-node fb-node-prod">
-            <div class="fb-num">${prodCount}</div>
-            <div class="fb-lbl">Продуктов</div>
-            <div class="fb-dots">${dotHtml(iStat.prod)}</div>
-          </div>
-          <div class="fb-arrow">▶</div>
-          <div class="fb-node fb-node-vals">
-            <div class="fb-num">${total}</div>
-            <div class="fb-lbl">Ценностей</div>
-          </div>
-        </div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-value">${projCount}</div>
+        <div class="kpi-label">Проектов</div>
       </div>
-
-      <div class="fb-divider"></div>
-
-      <!-- ЗДОРОВЬЕ -->
-      <div class="fb-section">
-        <div class="fb-title">Здоровье портфеля</div>
-        <div class="fb-health-cards">
-          <div class="fb-hcard fb-hcard-g">
-            <span class="fb-hnum">${gTask}</span>
-            <span class="fb-hpct">${gPct}%</span>
-            <span class="fb-hlbl">🟢 В норме</span>
-          </div>
-          <div class="fb-hcard fb-hcard-y">
-            <span class="fb-hnum">${yTask}</span>
-            <span class="fb-hpct">${yPct}%</span>
-            <span class="fb-hlbl">🟡 Контроль</span>
-          </div>
-          <div class="fb-hcard fb-hcard-r">
-            <span class="fb-hnum">${rTask}</span>
-            <span class="fb-hpct">${rPct}%</span>
-            <span class="fb-hlbl">🔴 Критично</span>
-          </div>
-        </div>
-        <div class="fb-bar">
-          <div class="fb-seg fb-seg-g" style="flex:${gTask || 0}" title="В норме: ${gTask} (${gPct}%)"></div>
-          <div class="fb-seg fb-seg-y" style="flex:${yTask || 0}" title="Контроль: ${yTask} (${yPct}%)"></div>
-          <div class="fb-seg fb-seg-r" style="flex:${rTask || 0}" title="Критично: ${rTask} (${rPct}%)"></div>
-        </div>
-        <div class="fb-bar-labels">
-          <span style="color:var(--color-green)">${gPct}% В норме</span>
-          <span style="color:var(--color-yellow)">${yPct}% Контроль</span>
-          <span style="color:var(--color-red)">${rPct}% Критично</span>
-        </div>
+      <div class="kpi-card">
+        <div class="kpi-value">${prodCount}</div>
+        <div class="kpi-label">Продуктов</div>
       </div>
-
+      <div class="kpi-card kpi-accent">
+        <div class="kpi-value">${totalTasks}</div>
+        <div class="kpi-label">Всего ценностей</div>
+      </div>
+      <div class="kpi-card kpi-green">
+        <div class="kpi-value">${gTask}</div>
+        <div class="kpi-label">🟢 В норме</div>
+      </div>
+      <div class="kpi-card kpi-yellow">
+        <div class="kpi-value">${yTask}</div>
+        <div class="kpi-label">🟡 Контроль</div>
+      </div>
+      <div class="kpi-card kpi-red">
+        <div class="kpi-value">${rTask}</div>
+        <div class="kpi-label">🔴 Критично</div>
+      </div>
     </div>
   `;
 }
