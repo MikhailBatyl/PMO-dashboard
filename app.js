@@ -38,6 +38,7 @@ async function loadData(forceRefresh = false) {
  */
 function renderAll() {
   renderKPI();
+  populateOwnerFilter();
   renderPortfolio();
   renderGantt(document.getElementById('gantt-container'), getFilteredItems());
   renderRisks();
@@ -55,12 +56,38 @@ function setupNavigation() {
 
   // Кнопка обновления данных
   document.getElementById('btn-refresh').addEventListener('click', () => loadData(true));
+
+  // Фильтры (только для Портфеля и Гантта)
+  document.getElementById('filter-type').addEventListener('change', e => {
+    filterType = e.target.value;
+    renderPortfolio();
+    renderGantt(document.getElementById('gantt-container'), getFilteredItems());
+    renderRisks();
+  });
+  document.getElementById('filter-owner').addEventListener('change', e => {
+    filterOwner = e.target.value;
+    renderPortfolio();
+    renderGantt(document.getElementById('gantt-container'), getFilteredItems());
+    renderRisks();
+  });
+  document.getElementById('filter-status').addEventListener('change', e => {
+    filterStatus = e.target.value;
+    renderPortfolio();
+    renderGantt(document.getElementById('gantt-container'), getFilteredItems());
+    renderRisks();
+  });
 }
 
 function switchTab(tab) {
   activeTab = tab;
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('hidden', s.id !== `screen-${tab}`));
+
+  // Фильтр-бар только на Портфеле и Гантте
+  const filtersBar = document.getElementById('filters-bar');
+  if (filtersBar) {
+    filtersBar.classList.toggle('hidden', !['portfolio', 'gantt'].includes(tab));
+  }
 }
 
 // ─── KPI-карточки ─────────────────────────────────────────────────────────────

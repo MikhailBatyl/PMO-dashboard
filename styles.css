@@ -92,6 +92,34 @@ body {
 }
 #btn-refresh:hover { background: var(--color-surface2); color: var(--color-text); }
 
+/* ─── Фильтры ────────────────────────────────────────────────────────────── */
+.filters-bar {
+  display: flex;
+  gap: 12px;
+  padding: 10px 24px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+  align-items: center;
+  position: sticky;
+  top: 53px;
+  z-index: 90;
+}
+
+.filters-bar select {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.filters-bar select:focus { outline: none; border-color: var(--color-accent); }
+
+.filters-bar label { color: var(--color-text-muted); font-size: 12px; align-self: center; }
+
 /* ─── Основной контент ───────────────────────────────────────────────────── */
 .main-content { padding: 20px 24px; }
 
