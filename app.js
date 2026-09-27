@@ -137,7 +137,7 @@ function renderStatusChart(red, yellow, green) {
       labels: ['Критично', 'Контроль', 'В норме'],
       datasets: [{
         data: [red, yellow, green],
-        backgroundColor: ['#dc2626', '#d97706', '#16a34a'],
+        backgroundColor: ['#e53935', '#d97706', '#64748b'],  /* red / yellow / gray(В норме) */
         borderWidth: 2,
         borderColor: '#ffffff'
       }]
@@ -744,7 +744,7 @@ function renderLaunchGrid(container, items) {
       <div class="cal-legend">
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(220,38,38,0.18)"></span>Критично</span>
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(217,119,6,0.18)"></span>Контроль</span>
-        <span class="cal-leg"><span class="cal-lb" style="background:rgba(22,163,74,0.14)"></span>В норме</span>
+        <span class="cal-leg"><span class="cal-lb" style="background:rgba(100,116,139,0.40)"></span>В норме</span>
         <span class="cal-leg"><span class="cal-lb cal-lb-done"></span>Выполнено ✓</span>
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(26,108,255,0.25)"></span>Текущий месяц</span>
       </div>
@@ -839,7 +839,8 @@ function renderLaunchGrid(container, items) {
           const lines = tasksInMonth.map(t => {
             const tl = t.timeline[m] || {};
             const done = tl.plan && tl.fact && t.status === '🟢';
-            const barCls = t.status === '🔴' ? 'bar-r' : t.status === '🟡' ? 'bar-y' : 'bar-g';
+            /* done (факт закрыт) → зелёный «Выполнено»; 🟢 но не done → серый «В норме» */
+            const barCls = t.status === '🔴' ? 'bar-r' : t.status === '🟡' ? 'bar-y' : done ? 'bar-done' : 'bar-g';
             return `<div class="cal-task-line ${barCls}${done ? ' cal-task-done' : ''}"
               data-task="${escHtml(t.task)}"
               data-desc="${escHtml(t.description || '')}"

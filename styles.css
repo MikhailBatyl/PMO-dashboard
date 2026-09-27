@@ -7,12 +7,13 @@
   --color-text:       #1a1a1a;
   --color-text-muted: #888888;
   --color-accent:     #1a6cff;
-  --color-green:      #16a34a;
+  --color-green:      #64748b;           /* СЕРЫЙ — «В норме» (🟢 не выполнено) */
+  --color-done:       #16a34a;           /* ЗЕЛЁНЫЙ — «Выполнено» (факт закрыт) */
   --color-yellow:     #d97706;
   --color-red:        #e53935;
   --color-red-bg:     rgba(229, 57, 53, 0.05);
   --color-yellow-bg:  rgba(217, 119, 6, 0.05);
-  --color-green-bg:   rgba(22, 163, 74, 0.05);
+  --color-green-bg:   rgba(100, 116, 139, 0.05);
   --radius:           4px;
   --shadow:           none;
   /* Тень только для плавающих элементов (тултипы, попапы) */
@@ -461,7 +462,7 @@ body {
 .gantt-strip + .gantt-strip { border-top: 1px solid var(--color-border); }
 
 .gantt-strip-plan      { background: rgba(26, 108, 255, 0.25); }
-.gantt-strip-fact      { background: rgba(22, 163, 74,  0.30); }
+.gantt-strip-fact      { background: rgba(22, 163, 74,  0.40); } /* зелёный = Выполнено/Факт */
 .gantt-strip-deviation { background: rgba(229, 57, 53,  0.18); }
 
 .gantt-subgroup-name { padding-left: 20px; font-style: italic; }
@@ -721,7 +722,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
   transition: background 0.15s;
 }
 .pg-plan.pg-on { background: rgba(26,108,255,0.50); }
-.pg-fact.pg-on { background: rgba(22,163,74,0.60);  }
+.pg-fact.pg-on { background: rgba(22,163,74,0.65);  } /* зелёный = Выполнено/Факт */
 
 .pg-legend {
   display: flex;
@@ -732,7 +733,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
   font-weight: 500;
 }
 .pg-plan-leg { color: var(--color-accent); }
-.pg-fact-leg { color: var(--color-green);  }
+.pg-fact-leg { color: var(--color-done);  } /* зелёный = Факт/Выполнено */
 
 /* Пустая ячейка col1 в строках задач */
 .td-empty {
@@ -795,7 +796,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 }
 
 .cal-lb-plan { background: rgba(26,  108, 255, 0.25); }
-.cal-lb-done { background: rgba(22,  163,  74, 0.48); }
+.cal-lb-done { background: rgba(22,  163,  74, 0.55); } /* зелёный = Выполнено */
 .cal-lb-part { background: rgba(217, 119,   6, 0.38); }
 
 /* ─── Таблица ── */
@@ -921,8 +922,14 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 
 /* Цвет плашки по статусу каждой ценности (класс задаётся в JS) */
 .cal-task-line.bar-g {
+  /* СЕРЫЙ — «В норме»: задача идёт по плану, но ещё не выполнена */
+  background: rgba(100, 116, 139, 0.10);
+  border-left-color: rgba(100, 116, 139, 0.55);
+}
+.cal-task-line.bar-done {
+  /* ЗЕЛЁНЫЙ — «Выполнено»: факт закрыт */
   background: rgba(22, 163, 74, 0.10);
-  border-left-color: rgba(22, 163, 74, 0.60);
+  border-left-color: rgba(22, 163, 74, 0.65);
 }
 .cal-task-line.bar-y {
   background: rgba(217, 119, 6, 0.10);
@@ -933,7 +940,8 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
   border-left-color: rgba(229, 57, 53, 0.60);
 }
 
-.cal-task-line.cal-task-done { opacity: 0.60; }
+/* Выполненные задачи — не приглушаем, зелёный цвет уже говорит сам за себя */
+.cal-task-line.cal-task-done { opacity: 1; }
 
 .cal-task-nm {
   flex: 1;
@@ -948,7 +956,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 }
 
 .cal-check {
-  color: var(--color-green);
+  color: var(--color-done);   /* зелёный = Выполнено */
   font-weight: 700;
   margin-right: 3px;
   flex-shrink: 0;
