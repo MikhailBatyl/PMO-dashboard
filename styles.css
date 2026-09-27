@@ -623,6 +623,8 @@ body {
 .tip-lbl { font-weight: 600; color: var(--color-text); margin-right: 4px; }
 .tip-risk { color: var(--color-red); }
 .tip-risk .tip-lbl { color: var(--color-red); }
+/* Бизнес-нота в тултипе — курсив */
+.tip-biz { font-style: italic; color: var(--color-text-muted); line-height: 1.5; }
 
 td.has-tooltip { cursor: help; }
 td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
@@ -840,12 +842,14 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 
 .cal-td-name {
   width: 200px;
-  vertical-align: top;         /* по верху, чтобы иерархия читалась сверху вниз */
+  vertical-align: middle;      /* по центру — нота убрана, строки стали компактнее */
   overflow: visible;
   word-break: break-word;
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
 }
+/* Подсказка: курсор при наведении на название проекта */
+.cal-td-name.has-biz-tip { cursor: help; }
 .cal-td-cnt  {
   text-align: center;
   width: 100px;

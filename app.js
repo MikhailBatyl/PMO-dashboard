@@ -796,10 +796,11 @@ function renderLaunchGrid(container, items) {
 
     html += `
       <tr class="cal-item-row ${rowCls}">
-        <td class="cal-td cal-td-name">
+        <td class="cal-td cal-td-name${item.businessNote ? ' has-biz-tip' : ''}"
+            data-name="${escHtml(item.name)}"
+            data-biz="${escHtml(item.businessNote || '')}">
           <span class="type-badge ${item.type === 'Проект' ? 'badge-project' : 'badge-product'}">${item.type}</span>
           <strong>${escHtml(item.name)}</strong>
-          ${item.businessNote ? `<span class="cal-biz-note">${escHtml(item.businessNote.split(/\.\s+|\n/)[0])}</span>` : ''}
         </td>
         <td class="cal-td cal-td-cnt">
           <div class="mini-stat">
@@ -877,6 +878,7 @@ function attachCalendarTooltips(container) {
   const tooltip = document.getElementById('task-tooltip');
   if (!tooltip) return;
 
+  // Тултип на задачах (ценностях) внутри ячеек месяца
   container.querySelectorAll('.cal-task-line[data-task]').forEach(el => {
     el.style.cursor = 'help';
 
@@ -897,6 +899,30 @@ function attachCalendarTooltips(container) {
       descEl.style.display = rows.length ? '' : 'none';
 
       tooltip.querySelector('.tooltip-kpi').style.display = 'none';
+      tooltip.classList.remove('hidden');
+      positionTooltip(e, tooltip);
+    });
+    el.addEventListener('mousemove', e => positionTooltip(e, tooltip));
+    el.addEventListener('mouseleave', () => tooltip.classList.add('hidden'));
+  });
+
+  // Тултип на названии проекта/продукта — показываем бизнес-нота курсивом
+  container.querySelectorAll('.cal-td-name.has-biz-tip').forEach(el => {
+    el.style.cursor = 'help';
+
+    el.addEventListener('mouseenter', e => {
+      const name = el.dataset.name || '';
+      const biz  = el.dataset.biz  || '';
+
+      tooltip.querySelector('.tooltip-title').textContent = name;
+
+      const descEl = tooltip.querySelector('.tooltip-desc');
+      descEl.innerHTML = biz
+        ? `<div class="tip-row tip-biz"><em>${escHtml(biz)}</em></div>`
+        : '';
+      descEl.style.display = biz ? '' : 'none';
+      tooltip.querySelector('.tooltip-kpi').style.display = 'none';
+
       tooltip.classList.remove('hidden');
       positionTooltip(e, tooltip);
     });
