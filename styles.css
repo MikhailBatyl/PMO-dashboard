@@ -1011,7 +1011,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
   border-radius: 3px;
   overflow: hidden;
   background: var(--color-border);
-  gap: 1px;
+  /* gap убран — давал 1px артефакт для нулевых сегментов */
 }
 
 .mini-seg {

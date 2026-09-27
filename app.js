@@ -775,9 +775,11 @@ function renderLaunchGrid(container, items) {
     const gCnt  = allTasks.filter(t => t.status === '🟢').length;
     const yCnt  = allTasks.filter(t => t.status === '🟡').length;
     const rCnt  = allTasks.filter(t => t.status === '🔴').length;
-    const gPct  = total ? Math.round(gCnt / total * 100) : 0;
-    const yPct  = total ? Math.round(yCnt / total * 100) : 0;
-    const rPct  = total ? 100 - gPct - yPct : 0;
+    // Считаем проценты прямо по каждому счётчику — не через вычитание
+    // чтобы избежать: "остаток 100-g-y уходит в красный при rCnt=0"
+    const gPct  = total && gCnt ? Math.round(gCnt / total * 100) : 0;
+    const yPct  = total && yCnt ? Math.round(yCnt / total * 100) : 0;
+    const rPct  = total && rCnt ? Math.round(rCnt / total * 100) : 0;
 
     // Для каждой задачи определяем её «последний месяц запуска»
     // (последний месяц с планом; если плана нет — последний с фактом)
@@ -806,14 +808,14 @@ function renderLaunchGrid(container, items) {
           <div class="mini-stat">
             <span class="mini-stat-num">${total}</span>
             <div class="mini-bar" title="🟢 ${gCnt} / 🟡 ${yCnt} / 🔴 ${rCnt}">
-              <div class="mini-seg mini-g" style="width:${gPct}%"></div>
-              <div class="mini-seg mini-y" style="width:${yPct}%"></div>
-              <div class="mini-seg mini-r" style="width:${rPct}%"></div>
+              ${gCnt ? `<div class="mini-seg mini-g" style="width:${gPct}%"></div>` : ''}
+              ${yCnt ? `<div class="mini-seg mini-y" style="width:${yPct}%"></div>` : ''}
+              ${rCnt ? `<div class="mini-seg mini-r" style="width:${rPct}%"></div>` : ''}
             </div>
             <div class="mini-counts">
-              ${rCnt ? `<span class="mc-r">${rCnt}</span>` : ''}
-              ${yCnt ? `<span class="mc-y">${yCnt}</span>` : ''}
               ${gCnt ? `<span class="mc-g">${gCnt}</span>` : ''}
+              ${yCnt ? `<span class="mc-y">${yCnt}</span>` : ''}
+              ${rCnt ? `<span class="mc-r">${rCnt}</span>` : ''}
             </div>
           </div>
         </td>
