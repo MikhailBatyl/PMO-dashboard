@@ -126,10 +126,8 @@ function renderKPI() {
         totalTasks++;
         if (task.status === '🔴') redCount++;
         else if (task.status === '🟡') yellowCount++;
-        else if (task.status === '🟢') {
-          if (isTaskDone(task)) doneCount++;
-          else greenCount++;
-        }
+        else if (isTaskDone(task)) doneCount++;
+        else greenCount++; // 🟢 без закрытого факта + пустой/иной статус → В норме
       });
     });
   });
@@ -677,11 +675,10 @@ function renderFunnelBoard(container) {
     item.subgroups.forEach(sg => {
       sg.tasks.forEach(t => {
         totalTasks++;
-        if (t.status === '🟢') {
-          if (isTaskDone(t)) dTask++;
-          else gTask++;
-        } else if (t.status === '🟡') yTask++;
-        else if (t.status === '🔴') rTask++;
+        if (t.status === '🔴') rTask++;
+        else if (t.status === '🟡') yTask++;
+        else if (isTaskDone(t)) dTask++;
+        else gTask++; // 🟢 без закрытого факта + пустой/иной статус → В норме
       });
     });
   });
@@ -823,7 +820,7 @@ function renderLaunchGrid(container, items) {
     const total    = allTasks.length;
     const yCnt     = allTasks.filter(t => t.status === '🟡').length;
     const rCnt     = allTasks.filter(t => t.status === '🔴').length;
-    // «Выполнено» = 🟢 + в месяце запуска есть и план и факт
+    // «Выполнено» = не 🔴, не 🟡 + в месяце запуска есть и план и факт + статус 🟢
     const doneCnt  = allTasks.filter(t => {
       if (t.status !== '🟢') return false;
       const lm = taskLaunchMonth.get(t.task);
@@ -831,8 +828,8 @@ function renderLaunchGrid(container, items) {
       const tl = t.timeline[lm] || {};
       return !!(tl.plan && tl.fact);
     }).length;
-    // «В норме» = 🟢, но ещё не выполнено
-    const gCnt     = allTasks.filter(t => t.status === '🟢').length - doneCnt;
+    // «В норме» = не 🔴, не 🟡, не выполнено (пустой статус сюда тоже входит)
+    const gCnt     = total - yCnt - rCnt - doneCnt;
 
     // Считаем проценты прямо по каждому счётчику
     const donePct  = total && doneCnt ? Math.round(doneCnt / total * 100) : 0;
