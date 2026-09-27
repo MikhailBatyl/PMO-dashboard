@@ -770,17 +770,6 @@ function renderLaunchGrid(container, items) {
     const hasY = allTasks.some(t => t.status === '🟡');
     const rowCls = hasR ? 'cal-row-r' : hasY ? 'cal-row-y' : 'cal-row-g';
 
-    // Подсчёт статусов для мини-бара
-    const total = allTasks.length;
-    const gCnt  = allTasks.filter(t => t.status === '🟢').length;
-    const yCnt  = allTasks.filter(t => t.status === '🟡').length;
-    const rCnt  = allTasks.filter(t => t.status === '🔴').length;
-    // Считаем проценты прямо по каждому счётчику — не через вычитание
-    // чтобы избежать: "остаток 100-g-y уходит в красный при rCnt=0"
-    const gPct  = total && gCnt ? Math.round(gCnt / total * 100) : 0;
-    const yPct  = total && yCnt ? Math.round(yCnt / total * 100) : 0;
-    const rPct  = total && rCnt ? Math.round(rCnt / total * 100) : 0;
-
     // Для каждой задачи определяем её «последний месяц запуска»
     // (последний месяц с планом; если плана нет — последний с фактом)
     const taskLaunchMonth = new Map();
@@ -796,6 +785,27 @@ function renderLaunchGrid(container, items) {
       }
     });
 
+    // Подсчёт статусов для мини-бара (после taskLaunchMonth чтобы определить «Выполнено»)
+    const total    = allTasks.length;
+    const yCnt     = allTasks.filter(t => t.status === '🟡').length;
+    const rCnt     = allTasks.filter(t => t.status === '🔴').length;
+    // «Выполнено» = 🟢 + в месяце запуска есть и план и факт
+    const doneCnt  = allTasks.filter(t => {
+      if (t.status !== '🟢') return false;
+      const lm = taskLaunchMonth.get(t.task);
+      if (!lm) return false;
+      const tl = t.timeline[lm] || {};
+      return !!(tl.plan && tl.fact);
+    }).length;
+    // «В норме» = 🟢, но ещё не выполнено
+    const gCnt     = allTasks.filter(t => t.status === '🟢').length - doneCnt;
+
+    // Считаем проценты прямо по каждому счётчику
+    const donePct  = total && doneCnt ? Math.round(doneCnt / total * 100) : 0;
+    const gPct     = total && gCnt    ? Math.round(gCnt    / total * 100) : 0;
+    const yPct     = total && yCnt    ? Math.round(yCnt    / total * 100) : 0;
+    const rPct     = total && rCnt    ? Math.round(rCnt    / total * 100) : 0;
+
     html += `
       <tr class="cal-item-row ${rowCls}">
         <td class="cal-td cal-td-name${item.businessNote ? ' has-biz-tip' : ''}"
@@ -807,15 +817,17 @@ function renderLaunchGrid(container, items) {
         <td class="cal-td cal-td-cnt">
           <div class="mini-stat">
             <span class="mini-stat-num">${total}</span>
-            <div class="mini-bar" title="🟢 ${gCnt} / 🟡 ${yCnt} / 🔴 ${rCnt}">
-              ${gCnt ? `<div class="mini-seg mini-g" style="width:${gPct}%"></div>` : ''}
-              ${yCnt ? `<div class="mini-seg mini-y" style="width:${yPct}%"></div>` : ''}
-              ${rCnt ? `<div class="mini-seg mini-r" style="width:${rPct}%"></div>` : ''}
+            <div class="mini-bar" title="✓ ${doneCnt} / В норме ${gCnt} / 🟡 ${yCnt} / 🔴 ${rCnt}">
+              ${doneCnt ? `<div class="mini-seg mini-done" style="width:${donePct}%"></div>` : ''}
+              ${gCnt    ? `<div class="mini-seg mini-g"    style="width:${gPct}%"></div>`    : ''}
+              ${yCnt    ? `<div class="mini-seg mini-y"    style="width:${yPct}%"></div>`    : ''}
+              ${rCnt    ? `<div class="mini-seg mini-r"    style="width:${rPct}%"></div>`    : ''}
             </div>
             <div class="mini-counts">
-              ${gCnt ? `<span class="mc-g">${gCnt}</span>` : ''}
-              ${yCnt ? `<span class="mc-y">${yCnt}</span>` : ''}
-              ${rCnt ? `<span class="mc-r">${rCnt}</span>` : ''}
+              ${doneCnt ? `<span class="mc-done">${doneCnt}</span>` : ''}
+              ${gCnt    ? `<span class="mc-g">${gCnt}</span>`       : ''}
+              ${yCnt    ? `<span class="mc-y">${yCnt}</span>`       : ''}
+              ${rCnt    ? `<span class="mc-r">${rCnt}</span>`       : ''}
             </div>
           </div>
         </td>
