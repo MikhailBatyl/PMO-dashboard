@@ -1,9 +1,9 @@
-/* ─── Переменные и сброс — v3 (Clean Enterprise UI) ───────────────────────── */
+/* ─── Переменные и сброс — v4 (ПРОФИТ-style: серый фон, мягкие карточки) ──── */
 :root {
-  --color-bg:         #ffffff;
+  --color-bg:         #f4f5f7;          /* серый фон страницы */
   --color-surface:    #ffffff;
-  --color-surface2:   #f5f6f8;
-  --color-border:     #e8e8e8;
+  --color-surface2:   #f0f2f5;
+  --color-border:     #e4e6ea;
   --color-text:       #1a1a1a;
   --color-text-muted: #888888;
   --color-accent:     #1a6cff;
@@ -14,10 +14,10 @@
   --color-red-bg:     rgba(229, 57, 53, 0.05);
   --color-yellow-bg:  rgba(217, 119, 6, 0.05);
   --color-green-bg:   rgba(100, 116, 139, 0.05);
-  --radius:           4px;
-  --shadow:           none;
+  --radius:           8px;              /* мягче: было 4px */
+  --shadow:           0 1px 4px rgba(0,0,0,0.06);          /* тень на карточках */
   /* Тень только для плавающих элементов (тултипы, попапы) */
-  --shadow-float:     0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+  --shadow-float:     0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.07);
   --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
@@ -36,6 +36,7 @@ body {
 .header {
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   padding: 0 24px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;  /* лого | вкладки по центру | кнопка */
@@ -168,13 +169,14 @@ body {
 .kpi-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 10px 14px 12px;
   display: flex;
   flex-direction: column;
   gap: 0;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
 /* ── Лейбл — наверху, серый текст ── */
@@ -232,6 +234,7 @@ body {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 14px 18px;
+  box-shadow: var(--shadow);
 }
 
 .chart-card h3 {
@@ -249,6 +252,7 @@ body {
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
   overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
 .portfolio-table {
@@ -410,6 +414,7 @@ body {
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
   overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
 .gantt-table th, .gantt-table td {
@@ -822,6 +827,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
   overflow-x: auto;
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
+  box-shadow: var(--shadow);
 }
 
 .cal-table {
