@@ -141,12 +141,12 @@ function renderKPI() {
   document.getElementById('kpi-products').textContent = productCount;
 
   // Круговая диаграмма статусов через Chart.js
-  renderStatusChart(redCount, yellowCount, greenCount);
+  renderStatusChart(redCount, yellowCount, greenCount, doneCount);
 }
 
 let statusChart = null;
 
-function renderStatusChart(red, yellow, green) {
+function renderStatusChart(red, yellow, green, done) {
   const ctx = document.getElementById('status-chart');
   if (!ctx) return;
 
@@ -155,10 +155,10 @@ function renderStatusChart(red, yellow, green) {
   statusChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Критично', 'Контроль', 'В работе'],
+      labels: ['Критично', 'Контроль', 'В работе', 'Выполнено'],
       datasets: [{
-        data: [red, yellow, green],
-        backgroundColor: ['#e53935', '#d97706', '#64748b'],  /* red / yellow / gray(В работе) */
+        data: [red, yellow, green, done],
+        backgroundColor: ['#e53935', '#d97706', '#64748b', '#16a34a'],  /* red / yellow / gray / green */
         borderWidth: 2,
         borderColor: '#ffffff'
       }]
