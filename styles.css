@@ -36,9 +36,9 @@ body {
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   padding: 0 24px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;  /* лого | вкладки по центру | кнопка */
   align-items: center;
-  gap: 24px;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -64,7 +64,7 @@ body {
 .nav-tabs {
   display: flex;
   gap: 2px;
-  flex: 1;
+  justify-self: center;   /* по центру grid-колонки */
 }
 
 .nav-tab {
@@ -98,6 +98,7 @@ body {
   font-size: 12px;
   transition: background 0.15s, color 0.15s;
   white-space: nowrap;
+  justify-self: end;      /* прижат вправо */
 }
 #btn-refresh:hover { background: var(--color-surface2); color: var(--color-text); }
 
