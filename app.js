@@ -721,6 +721,23 @@ function renderLaunchGrid(container, items) {
   );
   const months = padToEightMonths(rawMonths);
 
+  // ── Определяем текущий месяц для подсветки ──
+  const _NOW   = new Date();
+  const _MABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const _curKey = _MABBR[_NOW.getMonth()] + '-' + String(_NOW.getFullYear()).slice(2);
+  // Преобразует "Sep-26" → числовой индекс для сравнения
+  const _mToIdx = key => {
+    const p = key.split('-');
+    return parseInt('20' + p[1]) * 12 + _MABBR.indexOf(p[0]);
+  };
+  const _curIdx = _mToIdx(_curKey);
+  const _monthCls = m => {
+    const d = _mToIdx(m) - _curIdx;
+    if (d === 0) return 'cal-col-current';
+    if (d < 0)  return 'cal-col-past';
+    return '';
+  };
+
   let html = `
     <div class="cal-header-row">
       <span class="cal-section-title">Запуски по месяцам</span>
@@ -729,6 +746,7 @@ function renderLaunchGrid(container, items) {
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(217,119,6,0.18)"></span>Контроль</span>
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(22,163,74,0.14)"></span>В норме</span>
         <span class="cal-leg"><span class="cal-lb cal-lb-done"></span>Выполнено ✓</span>
+        <span class="cal-leg"><span class="cal-lb" style="background:rgba(26,108,255,0.25)"></span>Текущий месяц</span>
       </div>
     </div>
     <div class="cal-table-wrap">
@@ -737,7 +755,10 @@ function renderLaunchGrid(container, items) {
           <tr>
             <th class="cal-th cal-th-name">Наименование</th>
             <th class="cal-th cal-th-cnt">Ценности</th>
-            ${months.map(m => `<th class="cal-th cal-th-m">${formatMonth(m)}</th>`).join('')}
+            ${months.map(m => {
+              const tc = _monthCls(m);
+              return `<th class="cal-th cal-th-m ${tc === 'cal-col-current' ? 'cal-th-current' : tc === 'cal-col-past' ? 'cal-th-past' : ''}">${formatMonth(m)}</th>`;
+            }).join('')}
           </tr>
         </thead>
         <tbody>
@@ -798,8 +819,14 @@ function renderLaunchGrid(container, items) {
         ${months.map(m => {
           // Только задачи, чей последний плановый месяц — именно этот
           const tasksInMonth = allTasks.filter(t => taskLaunchMonth.get(t.task) === m);
+          // Класс по временной позиции (текущий / прошлый / будущий)
+          const timeCls = _monthCls(m);
+          // Прошлый месяц + есть незакрытый план → «просрочено»
+          const isOverdue = timeCls === 'cal-col-past' &&
+            tasksInMonth.some(t => { const tl = t.timeline[m]||{}; return tl.plan && !tl.fact; });
+          const finalTimeCls = isOverdue ? 'cal-col-overdue' : timeCls;
 
-          if (!tasksInMonth.length) return `<td class="cal-td cal-td-m cal-td-empty"></td>`;
+          if (!tasksInMonth.length) return `<td class="cal-td cal-td-m cal-td-empty ${finalTimeCls}"></td>`;
 
           // Цвет ячейки по наихудшему статусу
           const cHasR = tasksInMonth.some(t => t.status === '🔴');
@@ -819,7 +846,7 @@ function renderLaunchGrid(container, items) {
             </div>`;
           }).join('');
 
-          return `<td class="cal-td cal-td-m ${cellCls}">${lines}</td>`;
+          return `<td class="cal-td cal-td-m ${cellCls} ${finalTimeCls}">${lines}</td>`;
         }).join('')}
       </tr>
     `;

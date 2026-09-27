@@ -858,10 +858,39 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .cal-row-y { border-left: 3px solid var(--color-yellow); }
 .cal-row-g { border-left: 3px solid var(--color-green); }
 
-/* ── Ячейки месяцев ── */
+/* ── Ячейки месяцев — цвет по статусу ── */
 .cal-cell-r { background: transparent; }
 .cal-cell-y { background: transparent; }
 .cal-cell-g { background: transparent; }
+
+/* ── Временная подсветка колонок ── */
+
+/* Текущий месяц — шапка */
+.cal-th-current {
+  color: var(--color-accent) !important;
+  background: rgba(26, 108, 255, 0.07) !important;
+  border-bottom: 2px solid var(--color-accent) !important;
+}
+
+/* Прошлые месяцы — шапка приглушена */
+.cal-th-past {
+  color: #aaa !important;
+}
+
+/* Текущий месяц — ячейки */
+.cal-col-current {
+  background: rgba(26, 108, 255, 0.04) !important;
+}
+
+/* Прошлый месяц — ячейки (нет задач / закрыто) */
+.cal-col-past {
+  background: transparent;
+}
+
+/* Прошлый месяц + незакрытый план → сигнал просрочки */
+.cal-col-overdue {
+  background: rgba(229, 57, 53, 0.04) !important;
+}
 
 /* ── Плашка-бар ценности (стиль chart-bar: цветная полоска слева + тонкий фон) ── */
 .cal-task-line {
