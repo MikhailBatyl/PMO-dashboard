@@ -863,38 +863,36 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .cal-cell-y { background: transparent; }
 .cal-cell-g { background: transparent; }
 
-/* ── Строка ценности внутри ячейки ── */
+/* ── Плашка-бар ценности (стиль chart-bar: цветная полоска слева + тонкий фон) ── */
 .cal-task-line {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 4px;
-  border-radius: 3px;
-  margin-bottom: 2px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border-left: 3px solid transparent;
+  margin-bottom: 3px;
   font-size: 11px;
-  line-height: 1.4;
+  line-height: 1.5;
   min-width: 0;
   overflow: hidden;
 }
 .cal-task-line:last-child { margin-bottom: 0; }
 
-.cal-cell-r .cal-task-line { background: rgba(229, 57,  53, 0.08); }
-.cal-cell-y .cal-task-line { background: rgba(217,119,   6, 0.08); }
-.cal-cell-g .cal-task-line { background: rgba(22, 163,  74, 0.08); }
-
-.cal-task-line.cal-task-done { opacity: 0.72; }
-
-.cal-task-st {
-  flex-shrink: 0;
-  font-size: 12px;
-  line-height: 1.4;
-  margin-top: 0;
+/* Цвет плашки по статусу каждой ценности (класс задаётся в JS) */
+.cal-task-line.bar-g {
+  background: rgba(22, 163, 74, 0.10);
+  border-left-color: rgba(22, 163, 74, 0.60);
+}
+.cal-task-line.bar-y {
+  background: rgba(217, 119, 6, 0.10);
+  border-left-color: rgba(217, 119, 6, 0.60);
+}
+.cal-task-line.bar-r {
+  background: rgba(229, 57, 53, 0.10);
+  border-left-color: rgba(229, 57, 53, 0.60);
 }
 
-/* Цветной фон под эмодзи статуса */
-.cst-r { background: rgba(229, 57, 53, 0.12); border-radius: 3px; padding: 0 2px; }
-.cst-y { background: rgba(217,119,  6, 0.12); border-radius: 3px; padding: 0 2px; }
-.cst-g { background: rgba(22, 163, 74, 0.12); border-radius: 3px; padding: 0 2px; }
+.cal-task-line.cal-task-done { opacity: 0.60; }
 
 .cal-task-nm {
   flex: 1;
@@ -911,7 +909,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .cal-check {
   color: var(--color-green);
   font-weight: 700;
-  margin-left: 2px;
+  margin-right: 3px;
   flex-shrink: 0;
 }
 

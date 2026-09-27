@@ -786,13 +786,12 @@ function renderLaunchGrid(container, items) {
           const lines = tasksInMonth.map(t => {
             const tl = t.timeline[m] || {};
             const done = tl.plan && tl.fact && t.status === '🟢';
-            const stColor = t.status === '🔴' ? 'cst-r' : t.status === '🟡' ? 'cst-y' : 'cst-g';
-            return `<div class="cal-task-line${done ? ' cal-task-done' : ''}"
+            const barCls = t.status === '🔴' ? 'bar-r' : t.status === '🟡' ? 'bar-y' : 'bar-g';
+            return `<div class="cal-task-line ${barCls}${done ? ' cal-task-done' : ''}"
               data-task="${escHtml(t.task)}"
               data-desc="${escHtml(t.description || '')}"
               data-owner="${escHtml(t.owner || '')}"
               data-risk="${escHtml(t.risk && t.risk !== '-' ? t.risk : '')}">
-              <span class="cal-task-st ${stColor}">${t.status}</span>
               <span class="cal-task-nm">${done ? '<span class="cal-check">✓ </span>' : ''}${escHtml(t.task)}</span>
             </div>`;
           }).join('');
