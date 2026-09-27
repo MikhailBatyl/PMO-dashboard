@@ -309,9 +309,9 @@ body {
 
 /* Приоритет */
 .prio-badge { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 11px; font-weight: 600; }
-.prio-Высокий { background: rgba(229,57,53,0.08);  color: var(--color-red); }
-.prio-Средний { background: rgba(217,119,6,0.08);  color: var(--color-yellow); }
-.prio-Низкий  { background: rgba(22,163,74,0.08);  color: var(--color-green); }
+.prio-Высокий { background: rgba(229,57,53,0.08);   color: var(--color-red); }
+.prio-Средний { background: rgba(217,119,6,0.08);   color: var(--color-yellow); }
+.prio-Низкий  { background: rgba(100,116,139,0.08); color: var(--color-green); }
 .prio-—       { color: var(--color-text-muted); }
 
 /* Заголовки проектов/продуктов */
@@ -448,7 +448,23 @@ body {
 .gantt-task-name { min-width: 200px; max-width: 200px; }
 
 .gantt-owner { color: var(--color-text-muted); font-size: 11px; margin-left: 6px; }
-.status-dot  { margin-right: 4px; }
+
+/* CSS-точка статуса (заменяет emoji в Гантте) */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.status-dot.dot-g { background: var(--color-green);  }
+.status-dot.dot-y { background: var(--color-yellow); }
+.status-dot.dot-r { background: var(--color-red);    }
+
+/* Строки Гантта: подсветка по статусу */
+.gantt-task-row.status-yellow { background: var(--color-yellow-bg); }
+.gantt-task-row.status-red    { background: var(--color-red-bg);    }
 
 .gantt-cell-month {
   padding: 0 !important;
@@ -519,7 +535,7 @@ body {
 }
 .risk-severity-red    { color: var(--color-red);    background: rgba(229,57,53,0.10); }
 .risk-severity-yellow { color: var(--color-yellow); background: rgba(217,119,6,0.10); }
-.risk-severity-green  { color: var(--color-green);  background: rgba(22,163,74,0.10); }
+.risk-severity-green  { color: var(--color-green);  background: rgba(100,116,139,0.10); } /* серый — В норме */
 
 .risk-task       { font-weight: 600; flex: 1; font-size: 13px; }
 .risk-owner      { color: var(--color-text-muted); font-size: 12px; }
