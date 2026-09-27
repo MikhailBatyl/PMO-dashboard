@@ -573,6 +573,8 @@ function renderRisks() {
 
   let html = `<div class="risks-list">`;
   riskyTasks.forEach(task => {
+    const severityLabel = task.status === '🔴' ? 'Критично' : task.status === '🟡' ? 'Контроль' : 'В норме';
+    const severityCls   = task.status === '🔴' ? 'risk-severity-red' : task.status === '🟡' ? 'risk-severity-yellow' : 'risk-severity-green';
     html += `
       <div class="risk-card ${statusToClass(task.status)}">
         <div class="risk-header">
@@ -580,6 +582,7 @@ function renderRisks() {
           <span class="risk-task">${escHtml(task.task)}</span>
           <span class="risk-owner">${escHtml(task.owner)}</span>
           <span class="risk-breadcrumb">${escHtml(task.itemName)}${task.subgroupName ? ' / ' + escHtml(task.subgroupName) : ''}</span>
+          <span class="risk-severity ${severityCls}">${severityLabel}</span>
         </div>
         ${task.risk !== '-' ? `<div class="risk-row"><span class="risk-label">⚠️ Риск:</span> <span class="risk-text">${escHtml(task.risk)}</span></div>` : ''}
         ${task.deviationReason !== '-' ? `<div class="risk-row"><span class="risk-label">↩ Причина:</span> <span class="risk-text">${escHtml(task.deviationReason)}</span></div>` : ''}
