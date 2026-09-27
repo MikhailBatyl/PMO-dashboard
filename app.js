@@ -750,6 +750,9 @@ function renderLaunchGrid(container, items) {
       )
     )
   );
+  // Сортируем хронологически, чтобы «последний плановый месяц»
+  // в taskLaunchMonth совпадал с логикой isTaskDone() и KPI-карточек
+  rawMonths.sort((a, b) => _monthIdx(a) - _monthIdx(b));
   const months = padToEightMonths(rawMonths);
 
   // ── Определяем текущий месяц для подсветки ──
