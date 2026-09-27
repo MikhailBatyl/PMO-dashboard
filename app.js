@@ -127,7 +127,7 @@ function renderKPI() {
         if (task.status === '🔴') redCount++;
         else if (task.status === '🟡') yellowCount++;
         else if (isTaskDone(task)) doneCount++;
-        else greenCount++; // 🟢 без закрытого факта + пустой/иной статус → В норме
+        else greenCount++; // 🟢 без закрытого факта + пустой/иной статус → В работе
       });
     });
   });
@@ -155,10 +155,10 @@ function renderStatusChart(red, yellow, green) {
   statusChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Критично', 'Контроль', 'В норме'],
+      labels: ['Критично', 'Контроль', 'В работе'],
       datasets: [{
         data: [red, yellow, green],
-        backgroundColor: ['#e53935', '#d97706', '#64748b'],  /* red / yellow / gray(В норме) */
+        backgroundColor: ['#e53935', '#d97706', '#64748b'],  /* red / yellow / gray(В работе) */
         borderWidth: 2,
         borderColor: '#ffffff'
       }]
@@ -594,7 +594,7 @@ function renderRisks() {
 
   let html = `<div class="risks-list">`;
   riskyTasks.forEach(task => {
-    const severityLabel = task.status === '🔴' ? 'Критично' : task.status === '🟡' ? 'Контроль' : 'В норме';
+    const severityLabel = task.status === '🔴' ? 'Критично' : task.status === '🟡' ? 'Контроль' : 'В работе';
     const severityCls   = task.status === '🔴' ? 'risk-severity-red' : task.status === '🟡' ? 'risk-severity-yellow' : 'risk-severity-green';
     html += `
       <div class="risk-card ${statusToClass(task.status)}">
@@ -678,7 +678,7 @@ function renderFunnelBoard(container) {
         if (t.status === '🔴') rTask++;
         else if (t.status === '🟡') yTask++;
         else if (isTaskDone(t)) dTask++;
-        else gTask++; // 🟢 без закрытого факта + пустой/иной статус → В норме
+        else gTask++; // 🟢 без закрытого факта + пустой/иной статус → В работе
       });
     });
   });
@@ -706,7 +706,7 @@ function renderFunnelBoard(container) {
         <div class="kpi-value">${dTask}</div>
       </div>
       <div class="kpi-card kpi-green">
-        <div class="kpi-label">В норме</div>
+        <div class="kpi-label">В работе</div>
         <div class="kpi-bar"></div>
         <div class="kpi-value">${gTask}</div>
       </div>
@@ -775,7 +775,7 @@ function renderLaunchGrid(container, items) {
       <div class="cal-legend">
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(220,38,38,0.18)"></span>Критично</span>
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(217,119,6,0.18)"></span>Контроль</span>
-        <span class="cal-leg"><span class="cal-lb" style="background:rgba(100,116,139,0.40)"></span>В норме</span>
+        <span class="cal-leg"><span class="cal-lb" style="background:rgba(100,116,139,0.40)"></span>В работе</span>
         <span class="cal-leg"><span class="cal-lb cal-lb-done"></span>Выполнено ✓</span>
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(26,108,255,0.25)"></span>Текущий месяц</span>
       </div>
@@ -828,7 +828,7 @@ function renderLaunchGrid(container, items) {
       const tl = t.timeline[lm] || {};
       return !!(tl.plan && tl.fact);
     }).length;
-    // «В норме» = не 🔴, не 🟡, не выполнено (пустой статус сюда тоже входит)
+    // «В работе» = не 🔴, не 🟡, не выполнено (пустой статус сюда тоже входит)
     const gCnt     = total - yCnt - rCnt - doneCnt;
 
     // Считаем проценты прямо по каждому счётчику
@@ -848,7 +848,7 @@ function renderLaunchGrid(container, items) {
         <td class="cal-td cal-td-cnt">
           <div class="mini-stat">
             <span class="mini-stat-num">${total}</span>
-            <div class="mini-bar" title="✓ ${doneCnt} / В норме ${gCnt} / 🟡 ${yCnt} / 🔴 ${rCnt}">
+            <div class="mini-bar" title="✓ ${doneCnt} / В работе ${gCnt} / 🟡 ${yCnt} / 🔴 ${rCnt}">
               ${doneCnt ? `<div class="mini-seg mini-done" style="width:${donePct}%"></div>` : ''}
               ${gCnt    ? `<div class="mini-seg mini-g"    style="width:${gPct}%"></div>`    : ''}
               ${yCnt    ? `<div class="mini-seg mini-y"    style="width:${yPct}%"></div>`    : ''}

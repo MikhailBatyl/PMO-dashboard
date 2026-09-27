@@ -64,7 +64,7 @@ function renderGantt(container, items) {
 
         const isFocused = typeof ganttFocusTask !== 'undefined' && ganttFocusTask && ganttFocusTask === task.task;
         const rowClass = isOverdue ? 'gantt-task-row gantt-overdue' : `gantt-task-row ${statusClass}${isFocused ? ' gantt-focused' : ''}`;
-        // CSS-точка статуса (серый=В норме, жёлтый=Контроль, красный=Критично)
+        // CSS-точка статуса (серый=В работе, жёлтый=Контроль, красный=Критично)
         const dotCls = task.status === '🟢' ? 'dot-g' : task.status === '🟡' ? 'dot-y' : 'dot-r';
 
         html += `<tr class="${rowClass}">

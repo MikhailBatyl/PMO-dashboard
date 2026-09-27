@@ -7,7 +7,7 @@
   --color-text:       #1a1a1a;
   --color-text-muted: #888888;
   --color-accent:     #1a6cff;
-  --color-green:      #64748b;           /* СЕРЫЙ — «В норме» (🟢 не выполнено) */
+  --color-green:      #64748b;           /* СЕРЫЙ — «В работе» (🟢 не выполнено) */
   --color-done:       #16a34a;           /* ЗЕЛЁНЫЙ — «Выполнено» (факт закрыт) */
   --color-yellow:     #d97706;
   --color-red:        #e53935;
@@ -537,7 +537,7 @@ body {
 }
 .risk-severity-red    { color: var(--color-red);    background: rgba(229,57,53,0.10); }
 .risk-severity-yellow { color: var(--color-yellow); background: rgba(217,119,6,0.10); }
-.risk-severity-green  { color: var(--color-green);  background: rgba(100,116,139,0.10); } /* серый — В норме */
+.risk-severity-green  { color: var(--color-green);  background: rgba(100,116,139,0.10); } /* серый — В работе */
 
 .risk-task       { font-weight: 600; flex: 1; font-size: 13px; }
 .risk-owner      { color: var(--color-text-muted); font-size: 12px; }
@@ -940,7 +940,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 
 /* Цвет плашки по статусу каждой ценности (класс задаётся в JS) */
 .cal-task-line.bar-g {
-  /* СЕРЫЙ — «В норме»: задача идёт по плану, но ещё не выполнена */
+  /* СЕРЫЙ — «В работе»: задача идёт по плану, но ещё не выполнена */
   background: rgba(100, 116, 139, 0.10);
   border-left-color: rgba(100, 116, 139, 0.55);
 }
@@ -1046,7 +1046,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
   transition: width 0.3s ease;
 }
 .mini-done { background: var(--color-done); }   /* зелёный — Выполнено */
-.mini-g    { background: var(--color-green); }   /* серый — В норме */
+.mini-g    { background: var(--color-green); }   /* серый — В работе */
 .mini-y    { background: var(--color-yellow); }
 .mini-r    { background: var(--color-red); }
 
@@ -1061,4 +1061,4 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .mc-done { color: var(--color-done); }   /* зелёный — Выполнено */
 .mc-r    { color: var(--color-red); }
 .mc-y    { color: var(--color-yellow); }
-.mc-g    { color: var(--color-green); } /* серый — В норме */
+.mc-g    { color: var(--color-green); } /* серый — В работе */
