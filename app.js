@@ -663,28 +663,34 @@ function renderFunnelBoard(container) {
   container.innerHTML = `
     <div class="kpi-grid">
       <div class="kpi-card">
-        <div class="kpi-value">${projCount}</div>
         <div class="kpi-label">Проектов</div>
+        <div class="kpi-bar"></div>
+        <div class="kpi-bottom"><div class="kpi-value">${projCount}</div><span class="kpi-arrow">→</span></div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-value">${prodCount}</div>
         <div class="kpi-label">Продуктов</div>
+        <div class="kpi-bar"></div>
+        <div class="kpi-bottom"><div class="kpi-value">${prodCount}</div><span class="kpi-arrow">→</span></div>
       </div>
       <div class="kpi-card kpi-accent">
-        <div class="kpi-value">${totalTasks}</div>
         <div class="kpi-label">Всего ценностей</div>
+        <div class="kpi-bar"></div>
+        <div class="kpi-bottom"><div class="kpi-value">${totalTasks}</div><span class="kpi-arrow">→</span></div>
       </div>
       <div class="kpi-card kpi-green">
-        <div class="kpi-value">${gTask}</div>
         <div class="kpi-label">🟢 В норме</div>
+        <div class="kpi-bar"></div>
+        <div class="kpi-bottom"><div class="kpi-value">${gTask}</div><span class="kpi-arrow">→</span></div>
       </div>
       <div class="kpi-card kpi-yellow">
-        <div class="kpi-value">${yTask}</div>
         <div class="kpi-label">🟡 Контроль</div>
+        <div class="kpi-bar"></div>
+        <div class="kpi-bottom"><div class="kpi-value">${yTask}</div><span class="kpi-arrow">→</span></div>
       </div>
       <div class="kpi-card kpi-red">
-        <div class="kpi-value">${rTask}</div>
         <div class="kpi-label">🔴 Критично</div>
+        <div class="kpi-bar"></div>
+        <div class="kpi-bottom"><div class="kpi-value">${rTask}</div><span class="kpi-arrow">→</span></div>
       </div>
     </div>
   `;
