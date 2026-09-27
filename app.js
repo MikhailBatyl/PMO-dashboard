@@ -736,7 +736,7 @@ function renderLaunchGrid(container, items) {
         <thead>
           <tr>
             <th class="cal-th cal-th-name">Наименование</th>
-            <th class="cal-th cal-th-cnt">Ценностей</th>
+            <th class="cal-th cal-th-cnt">Ценности</th>
             ${months.map(m => `<th class="cal-th cal-th-m">${formatMonth(m)}</th>`).join('')}
           </tr>
         </thead>
