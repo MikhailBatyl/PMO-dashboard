@@ -161,7 +161,7 @@ body {
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 160px));
-  justify-content: start;      /* карточки не растягиваются на всю ширину */
+  justify-content: start;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -170,32 +170,55 @@ body {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 10px 14px 12px;
+  padding: 12px 14px 0;          /* нет нижнего паддинга — бар вплотную к краю */
   display: flex;
   flex-direction: column;
   gap: 0;
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow);
+  min-height: 90px;
 }
 
 /* ── Лейбл — наверху, серый текст ── */
 .kpi-card .kpi-label {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--color-text-muted);
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.3;
-  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
 }
 
-/* ── Цветная горизонтальная полоска ── */
+/* ── Число — крупный центральный элемент ── */
+.kpi-card .kpi-value {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  margin-bottom: 4px;
+}
+
+/* ── Доля — мелкий текст под числом ── */
+.kpi-card .kpi-share {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-weight: 400;
+  line-height: 1.3;
+  margin-bottom: auto;   /* прижимает бар вниз */
+  padding-bottom: 8px;
+}
+
+/* ── Цветная горизонтальная полоска — внизу карточки ── */
 .kpi-bar {
   height: 3px;
-  width: 100%;
-  border-radius: 2px;
+  width: calc(100% + 28px);      /* выходит за padding 14px с каждой стороны */
+  margin: 0 -14px;
   background: var(--color-border);
-  margin-bottom: 10px;
   flex-shrink: 0;
+  border-radius: 0 0 var(--radius) var(--radius);
 }
 
 /* Цвет полоски по типу карточки */
@@ -204,15 +227,6 @@ body {
 .kpi-card.kpi-green  .kpi-bar { background: var(--color-green); }
 .kpi-card.kpi-done   .kpi-bar { background: var(--color-done); }
 .kpi-card.kpi-accent .kpi-bar { background: var(--color-accent); }
-
-/* ── Число ── */
-.kpi-card .kpi-value {
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
-}
 
 /* Цвет числа у статусных карточек */
 .kpi-card.kpi-red    .kpi-value { color: var(--color-red); }

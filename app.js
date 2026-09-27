@@ -140,6 +140,18 @@ function renderKPI() {
   document.getElementById('kpi-projects').textContent = projectCount;
   document.getElementById('kpi-products').textContent = productCount;
 
+  // Доля от общего числа ценностей
+  const _share = (n) => totalTasks ? `${n} из ${totalTasks} (${Math.round(n / totalTasks * 100)}%)` : '';
+  const _typeShare = (n) => (projectCount + productCount)
+    ? `${n} из ${projectCount + productCount} (${Math.round(n / (projectCount + productCount) * 100)}%)` : '';
+  document.getElementById('kpi-done-share').textContent   = _share(doneCount);
+  document.getElementById('kpi-green-share').textContent  = _share(greenCount);
+  document.getElementById('kpi-yellow-share').textContent = _share(yellowCount);
+  document.getElementById('kpi-red-share').textContent    = _share(redCount);
+  document.getElementById('kpi-total-share').textContent  = `${projectCount} пр. + ${productCount} прод.`;
+  document.getElementById('kpi-projects-share').textContent = _typeShare(projectCount);
+  document.getElementById('kpi-products-share').textContent = _typeShare(productCount);
+
   // Круговая диаграмма статусов через Chart.js
   renderStatusChart(redCount, yellowCount, greenCount, doneCount);
 }
@@ -683,42 +695,54 @@ function renderFunnelBoard(container) {
     });
   });
 
+  // Вспомогательные функции долей
+  const _sh  = (n) => totalTasks ? `${n} из ${totalTasks} (${Math.round(n / totalTasks * 100)}%)` : '';
+  const _tsh = (n) => (projCount + prodCount)
+    ? `${n} из ${projCount + prodCount} (${Math.round(n / (projCount + prodCount) * 100)}%)` : '';
+
   container.innerHTML = `
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-label">Проектов</div>
-        <div class="kpi-bar"></div>
         <div class="kpi-value">${projCount}</div>
+        <div class="kpi-share">${_tsh(projCount)}</div>
+        <div class="kpi-bar"></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Продуктов</div>
-        <div class="kpi-bar"></div>
         <div class="kpi-value">${prodCount}</div>
+        <div class="kpi-share">${_tsh(prodCount)}</div>
+        <div class="kpi-bar"></div>
       </div>
       <div class="kpi-card kpi-accent">
         <div class="kpi-label">Всего ценностей</div>
-        <div class="kpi-bar"></div>
         <div class="kpi-value">${totalTasks}</div>
+        <div class="kpi-share">${projCount} пр. + ${prodCount} прод.</div>
+        <div class="kpi-bar"></div>
       </div>
       <div class="kpi-card kpi-done">
         <div class="kpi-label">Выполнено</div>
-        <div class="kpi-bar"></div>
         <div class="kpi-value">${dTask}</div>
+        <div class="kpi-share">${_sh(dTask)}</div>
+        <div class="kpi-bar"></div>
       </div>
       <div class="kpi-card kpi-green">
         <div class="kpi-label">В работе</div>
-        <div class="kpi-bar"></div>
         <div class="kpi-value">${gTask}</div>
+        <div class="kpi-share">${_sh(gTask)}</div>
+        <div class="kpi-bar"></div>
       </div>
       <div class="kpi-card kpi-yellow">
         <div class="kpi-label">Контроль</div>
-        <div class="kpi-bar"></div>
         <div class="kpi-value">${yTask}</div>
+        <div class="kpi-share">${_sh(yTask)}</div>
+        <div class="kpi-bar"></div>
       </div>
       <div class="kpi-card kpi-red">
         <div class="kpi-label">Критично</div>
-        <div class="kpi-bar"></div>
         <div class="kpi-value">${rTask}</div>
+        <div class="kpi-share">${_sh(rTask)}</div>
+        <div class="kpi-bar"></div>
       </div>
     </div>
   `;
