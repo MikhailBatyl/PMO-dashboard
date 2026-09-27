@@ -827,7 +827,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 }
 
 .cal-th-name { width: 200px; }
-.cal-th-cnt  { text-align: center; width: 70px; padding: 8px 6px; white-space: nowrap; }
+.cal-th-cnt  { text-align: center; width: 90px; padding: 8px 6px; white-space: nowrap; }
 .cal-th-m    { /* равномерно по оставшемуся месту */ }
 
 .cal-td {
@@ -841,7 +841,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .cal-td-name { width: 200px; vertical-align: middle; overflow: visible; word-break: break-word; }
 .cal-td-cnt  {
   text-align: center;
-  width: 70px;
+  width: 90px;
   font-size: 13px;
   font-weight: 700;
   color: var(--color-text-muted);
