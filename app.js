@@ -91,11 +91,19 @@ function switchTab(tab) {
 }
 
 // ─── Вспомогательная функция: задача «Выполнена» если статус 🟢
-// и в последнем плановом месяце зафиксирован факт ─────────────────────────────
+// и в последнем плановом месяце (хронологически) зафиксирован факт ────────────
+const _MSEQ = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function _monthIdx(key) {
+  const p = key.split('-');
+  return parseInt('20' + p[1]) * 12 + _MSEQ.indexOf(p[0]);
+}
 function isTaskDone(task) {
   if (task.status !== '🟢') return false;
   const tl = task.timeline || {};
-  const planMonths = Object.keys(tl).filter(m => tl[m] && tl[m].plan);
+  // Сортируем месяцы хронологически — Object.keys() не гарантирует порядок
+  const planMonths = Object.keys(tl)
+    .filter(m => tl[m] && tl[m].plan)
+    .sort((a, b) => _monthIdx(a) - _monthIdx(b));
   if (!planMonths.length) return false;
   const lastPlan = planMonths[planMonths.length - 1];
   return !!(tl[lastPlan] && tl[lastPlan].fact);
