@@ -749,6 +749,15 @@ function renderLaunchGrid(container, items) {
     const hasY = allTasks.some(t => t.status === '🟡');
     const rowCls = hasR ? 'cal-row-r' : hasY ? 'cal-row-y' : 'cal-row-g';
 
+    // Подсчёт статусов для мини-бара
+    const total = allTasks.length;
+    const gCnt  = allTasks.filter(t => t.status === '🟢').length;
+    const yCnt  = allTasks.filter(t => t.status === '🟡').length;
+    const rCnt  = allTasks.filter(t => t.status === '🔴').length;
+    const gPct  = total ? Math.round(gCnt / total * 100) : 0;
+    const yPct  = total ? Math.round(yCnt / total * 100) : 0;
+    const rPct  = total ? 100 - gPct - yPct : 0;
+
     // Для каждой задачи определяем её «последний месяц запуска»
     // (последний месяц с планом; если плана нет — последний с фактом)
     const taskLaunchMonth = new Map();
@@ -771,7 +780,21 @@ function renderLaunchGrid(container, items) {
           <strong>${escHtml(item.name)}</strong>
           ${item.businessNote ? `<span class="cal-biz-note">${escHtml(item.businessNote.split(/\.\s+|\n/)[0])}</span>` : ''}
         </td>
-        <td class="cal-td cal-td-cnt">${allTasks.length}</td>
+        <td class="cal-td cal-td-cnt">
+          <div class="mini-stat">
+            <span class="mini-stat-num">${total}</span>
+            <div class="mini-bar" title="🟢 ${gCnt} / 🟡 ${yCnt} / 🔴 ${rCnt}">
+              <div class="mini-seg mini-g" style="width:${gPct}%"></div>
+              <div class="mini-seg mini-y" style="width:${yPct}%"></div>
+              <div class="mini-seg mini-r" style="width:${rPct}%"></div>
+            </div>
+            <div class="mini-counts">
+              ${rCnt ? `<span class="mc-r">${rCnt}</span>` : ''}
+              ${yCnt ? `<span class="mc-y">${yCnt}</span>` : ''}
+              ${gCnt ? `<span class="mc-g">${gCnt}</span>` : ''}
+            </div>
+          </div>
+        </td>
         ${months.map(m => {
           // Только задачи, чей последний плановый месяц — именно этот
           const tasksInMonth = allTasks.filter(t => taskLaunchMonth.get(t.task) === m);
