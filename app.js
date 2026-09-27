@@ -90,12 +90,23 @@ function switchTab(tab) {
   }
 }
 
+// ─── Вспомогательная функция: задача «Выполнена» если статус 🟢
+// и в последнем плановом месяце зафиксирован факт ─────────────────────────────
+function isTaskDone(task) {
+  if (task.status !== '🟢') return false;
+  const tl = task.timeline || {};
+  const planMonths = Object.keys(tl).filter(m => tl[m] && tl[m].plan);
+  if (!planMonths.length) return false;
+  const lastPlan = planMonths[planMonths.length - 1];
+  return !!(tl[lastPlan] && tl[lastPlan].fact);
+}
+
 // ─── KPI-карточки ─────────────────────────────────────────────────────────────
 function renderKPI() {
   if (!appData) return;
   const items = appData.items || [];
 
-  let totalTasks = 0, redCount = 0, yellowCount = 0, greenCount = 0;
+  let totalTasks = 0, redCount = 0, yellowCount = 0, greenCount = 0, doneCount = 0;
   let projectCount = 0, productCount = 0;
 
   items.forEach(item => {
@@ -107,15 +118,19 @@ function renderKPI() {
         totalTasks++;
         if (task.status === '🔴') redCount++;
         else if (task.status === '🟡') yellowCount++;
-        else if (task.status === '🟢') greenCount++;
+        else if (task.status === '🟢') {
+          if (isTaskDone(task)) doneCount++;
+          else greenCount++;
+        }
       });
     });
   });
 
   document.getElementById('kpi-total').textContent = totalTasks;
-  document.getElementById('kpi-red').textContent = redCount;
-  document.getElementById('kpi-yellow').textContent = yellowCount;
+  document.getElementById('kpi-done').textContent = doneCount;
   document.getElementById('kpi-green').textContent = greenCount;
+  document.getElementById('kpi-yellow').textContent = yellowCount;
+  document.getElementById('kpi-red').textContent = redCount;
   document.getElementById('kpi-projects').textContent = projectCount;
   document.getElementById('kpi-products').textContent = productCount;
 
@@ -648,13 +663,16 @@ function renderFunnelBoard(container) {
   let projCount = 0, prodCount = 0;
   let gTask = 0, yTask = 0, rTask = 0, totalTasks = 0;
 
+  let dTask = 0; // Выполнено
   items.forEach(item => {
     if (item.type === 'Проект') projCount++; else prodCount++;
     item.subgroups.forEach(sg => {
       sg.tasks.forEach(t => {
         totalTasks++;
-        if (t.status === '🟢') gTask++;
-        else if (t.status === '🟡') yTask++;
+        if (t.status === '🟢') {
+          if (isTaskDone(t)) dTask++;
+          else gTask++;
+        } else if (t.status === '🟡') yTask++;
         else if (t.status === '🔴') rTask++;
       });
     });
@@ -676,6 +694,11 @@ function renderFunnelBoard(container) {
         <div class="kpi-label">Всего ценностей</div>
         <div class="kpi-bar"></div>
         <div class="kpi-value">${totalTasks}</div>
+      </div>
+      <div class="kpi-card kpi-done">
+        <div class="kpi-label">Выполнено</div>
+        <div class="kpi-bar"></div>
+        <div class="kpi-value">${dTask}</div>
       </div>
       <div class="kpi-card kpi-green">
         <div class="kpi-label">В норме</div>

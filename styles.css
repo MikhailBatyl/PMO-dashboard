@@ -200,6 +200,7 @@ body {
 .kpi-card.kpi-red    .kpi-bar { background: var(--color-red); }
 .kpi-card.kpi-yellow .kpi-bar { background: var(--color-yellow); }
 .kpi-card.kpi-green  .kpi-bar { background: var(--color-green); }
+.kpi-card.kpi-done   .kpi-bar { background: var(--color-done); }
 .kpi-card.kpi-accent .kpi-bar { background: var(--color-accent); }
 
 /* ── Число ── */
@@ -215,6 +216,7 @@ body {
 .kpi-card.kpi-red    .kpi-value { color: var(--color-red); }
 .kpi-card.kpi-yellow .kpi-value { color: var(--color-yellow); }
 .kpi-card.kpi-green  .kpi-value { color: var(--color-green); }
+.kpi-card.kpi-done   .kpi-value { color: var(--color-done); }
 .kpi-card.kpi-accent .kpi-value { color: var(--color-accent); }
 
 .dashboard-bottom {
