@@ -853,25 +853,24 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 /* ─── Таблица ── */
 .cal-table-wrap {
   overflow-x: auto;
-  border-radius: var(--radius);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow);
+  /* Убрана общая рамка — строки теперь отдельные карточки */
 }
 
 .cal-table {
   width: 100%;
   table-layout: fixed;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 5px;      /* зазор между строками */
   font-size: 13px;
-  background: var(--color-surface);
+  background: transparent;
 }
 
+/* ── Шапка ── */
 .cal-th {
-  background: var(--color-surface2);
+  background: transparent;
   color: var(--color-text-muted);
-  padding: 8px 10px;
+  padding: 4px 10px 8px;
   border-bottom: 2px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -882,20 +881,36 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 }
 
 .cal-th-name { width: 200px; }
-.cal-th-cnt  { text-align: center; width: 100px; padding: 8px 6px; white-space: nowrap; }
+.cal-th-cnt  { text-align: center; width: 100px; padding: 4px 6px 8px; white-space: nowrap; }
 .cal-th-m    { /* равномерно по оставшемуся месту */ }
 
+/* ── Ячейки строк-карточек ── */
 .cal-td {
   padding: 7px 10px;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
+  border-left: none;
+  border-right: none;
   vertical-align: top;
   overflow: hidden;
 }
 
+/* Первая ячейка: левая граница + скругление слева */
+.cal-item-row td:first-child {
+  border-left: 1px solid var(--color-border);
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+/* Последняя ячейка: правая граница + скругление справа */
+.cal-item-row td:last-child {
+  border-right: 1px solid var(--color-border);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
 .cal-td-name {
   width: 200px;
-  vertical-align: middle;      /* по центру — нота убрана, строки стали компактнее */
+  vertical-align: middle;
   overflow: visible;
   word-break: break-word;
   padding-top: 8px !important;
@@ -913,19 +928,19 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
   white-space: nowrap;
 }
 .cal-td-m     { padding: 5px 7px !important; }
-.cal-td-empty { background: transparent !important; }
+.cal-td-empty { background: var(--color-surface) !important; }
 
-.cal-item-row { transition: background 0.12s; }
-.cal-item-row:hover { background: rgba(0,0,0,0.018); }
+.cal-item-row { transition: filter 0.12s; }
+.cal-item-row:hover td { filter: brightness(0.97); }
 
-/* Акцентная полоса статуса — 4px для выразительности */
-.cal-row-r { border-left: 4px solid #94a3b8; }
-.cal-row-y { border-left: 4px solid #94a3b8; }
-.cal-row-g { border-left: 4px solid #94a3b8; }
+/* Акцентная полоса статуса — на первой ячейке строки */
+.cal-row-r td:first-child { border-left: 3px solid var(--color-red) !important; }
+.cal-row-y td:first-child { border-left: 3px solid var(--color-yellow) !important; }
+.cal-row-g td:first-child { border-left: 3px solid var(--color-green) !important; }
 
 /* ── Ячейки месяцев — цвет по статусу ── */
-.cal-cell-r { background: transparent; }
-.cal-cell-y { background: transparent; }
+.cal-cell-r { background: rgba(229, 57, 53, 0.04); }
+.cal-cell-y { background: rgba(217, 119, 6, 0.04); }
 .cal-cell-g { background: transparent; }
 
 /* ── Временная подсветка колонок ── */
