@@ -1017,7 +1017,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 /* ── Плашка-бар ценности (стиль chart-bar: цветная полоска слева + тонкий фон) ── */
 .cal-task-line {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   padding: 3px 8px;
   border-radius: 4px;
   border-left: 3px solid transparent;
@@ -1025,7 +1025,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
   font-size: 11px;
   line-height: 1.5;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 .cal-task-line:last-child { margin-bottom: 0; }
 
@@ -1060,9 +1060,10 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .cal-task-nm {
   flex: 1;
   min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+  text-overflow: unset;
   color: var(--color-text);
   font-size: 11px;
   font-weight: 500;
