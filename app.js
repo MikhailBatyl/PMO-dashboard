@@ -882,8 +882,9 @@ function renderLaunchGrid(container, items) {
     const yPct     = total && yCnt    ? Math.round(yCnt    / total * 100) : 0;
     const rPct     = total && rCnt    ? Math.round(rCnt    / total * 100) : 0;
 
+    const typeCls = item.type === 'Проект' ? 'cal-type-project' : 'cal-type-product';
     html += `
-      <tr class="cal-item-row ${rowCls}">
+      <tr class="cal-item-row ${rowCls} ${typeCls}">
         <td class="cal-td cal-td-name${item.businessNote ? ' has-biz-tip' : ''}"
             data-name="${escHtml(item.name)}"
             data-biz="${escHtml(item.businessNote || '')}">
