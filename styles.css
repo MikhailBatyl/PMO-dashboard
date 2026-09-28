@@ -944,10 +944,10 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .cal-item-row { transition: filter 0.12s; }
 .cal-item-row:hover td { filter: brightness(0.97); }
 
-/* Акцентная полоса статуса — на первой ячейке строки */
-.cal-row-r td:first-child { border-left: 3px solid var(--color-red) !important; }
-.cal-row-y td:first-child { border-left: 3px solid var(--color-yellow) !important; }
-.cal-row-g td:first-child { border-left: 3px solid var(--color-green) !important; }
+/* Акцентная полоса — всегда стальной синий, без привязки к статусу */
+.cal-row-r td:first-child,
+.cal-row-y td:first-child,
+.cal-row-g td:first-child { border-left: 3px solid var(--color-accent) !important; }
 
 /* ── Ячейки месяцев — цвет по статусу ── */
 .cal-cell-r { background: rgba(229, 57, 53, 0.04); }
