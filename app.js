@@ -14,8 +14,23 @@ let ganttFocusTask = null;    // задача для перехода в Ган�
 // ─── Инициализация ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   setupNavigation();
+  renderCurrentDate();
+  setInterval(renderCurrentDate, 60_000);   // обновляем каждую минуту
   await loadData();
 });
+
+/**
+ * Отображает текущую дату в формате ДД.ММ.ГГГГ в шапке
+ */
+function renderCurrentDate() {
+  const el = document.getElementById('current-date');
+  if (!el) return;
+  const now = new Date();
+  const dd   = String(now.getDate()).padStart(2, '0');
+  const mm   = String(now.getMonth() + 1).padStart(2, '0');
+  const yyyy = now.getFullYear();
+  el.textContent = `${dd}.${mm}.${yyyy}`;
+}
 
 /**
  * Загружает данные из API и рендерит все экраны

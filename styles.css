@@ -100,9 +100,23 @@ body {
   font-size: 12px;
   transition: background 0.15s, color 0.15s;
   white-space: nowrap;
-  justify-self: end;      /* прижат вправо */
 }
 #btn-refresh:hover { background: var(--color-surface2); color: var(--color-text); }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: end;
+}
+
+.header-date {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
 
 /* ─── Фильтры ────────────────────────────────────────────────────────────── */
 .filters-bar {
