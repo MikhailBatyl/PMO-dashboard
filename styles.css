@@ -475,6 +475,15 @@ body {
 .gantt-group-row.gantt-level1 { background: var(--color-surface2); font-weight: 600; }
 .gantt-group-row.gantt-level2 { background: #fafafa; color: var(--color-text-muted); }
 
+/* Зазор перед каждой новой группой проекта/продукта */
+.gantt-group-row.gantt-level1 td {
+  border-top: 8px solid var(--color-bg) !important;
+}
+/* Первая группа — без верхнего зазора */
+.gantt-table tbody tr:first-child td {
+  border-top: 1px solid var(--color-border) !important;
+}
+
 .gantt-task-row:hover { background: #fafafa; }
 .gantt-overdue { background: rgba(229, 57, 53, 0.08) !important; }
 .gantt-overdue td { color: #b71c1c; }
@@ -636,10 +645,12 @@ body {
   background: var(--color-surface2);
   padding: 9px 16px !important;
   font-size: 13px;
-  border-top: 1px solid var(--color-border);
+  /* Зазор между группами = цвет фона страницы (зрительный gap) */
+  border-top: 8px solid var(--color-bg) !important;
   border-left: 4px solid var(--color-border);
 }
-.row-project-header:first-child td { border-top: none; }
+/* Первая группа — без верхнего зазора */
+.row-project-header:first-child td { border-top: none !important; }
 .row-project-header.header-red    td { border-left: 4px solid var(--color-red);    background: var(--color-red-bg); }
 .row-project-header.header-yellow td { border-left: 4px solid var(--color-yellow); background: var(--color-yellow-bg); }
 .row-project-header.header-green  td { border-left: 4px solid var(--color-green);  background: var(--color-green-bg); }
