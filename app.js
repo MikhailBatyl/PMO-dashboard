@@ -815,7 +815,7 @@ function renderLaunchGrid(container, items) {
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(220,38,38,0.18)"></span>Критично</span>
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(217,119,6,0.18)"></span>Контроль</span>
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(100,116,139,0.40)"></span>В работе</span>
-        <span class="cal-leg"><span class="cal-lb cal-lb-done"></span>Выполнено ✓</span>
+        <span class="cal-leg"><span class="cal-lb cal-lb-done"></span>✓ Выполнено</span>
         <span class="cal-leg"><span class="cal-lb" style="background:rgba(26,108,255,0.25)"></span>Текущий месяц</span>
       </div>
     </div>
