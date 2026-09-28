@@ -949,10 +949,10 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .cal-row-y td:first-child,
 .cal-row-g td:first-child { border-left: 3px solid var(--color-accent) !important; }
 
-/* ── Ячейки месяцев — фон нейтральный, цвет только у плашек ценностей ── */
-.cal-cell-r { background: transparent; }
-.cal-cell-y { background: transparent; }
-.cal-cell-g { background: transparent; }
+/* ── Ячейки месяцев — всегда белый фон, цвет только у плашек ценностей ── */
+.cal-cell-r { background: #ffffff; }
+.cal-cell-y { background: #ffffff; }
+.cal-cell-g { background: #ffffff; }
 
 /* ── Временная подсветка колонок ── */
 
@@ -973,9 +973,9 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
   background: rgba(26, 108, 255, 0.04) !important;
 }
 
-/* Прошлый месяц — ячейки (нет задач / закрыто) */
+/* Прошлый месяц — ячейки белые */
 .cal-col-past {
-  background: transparent;
+  background: #ffffff;
 }
 
 /* Прошлый месяц + незакрытый план → сигнал просрочки */
@@ -1018,10 +1018,10 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
   border-left-color: rgba(100, 116, 139, 0.40);
 }
 
-/* ✅ Выполнено — минимальная яркость */
+/* ✅ Выполнено — умеренно яркое, зелёный акцент хорошо читается */
 .cal-task-line.bar-done {
-  background: rgba(22, 163, 74, 0.04);
-  border-left-color: rgba(22, 163, 74, 0.25);
+  background: rgba(22, 163, 74, 0.12);
+  border-left-color: rgba(22, 163, 74, 0.75);
 }
 
 .cal-task-line.cal-task-done { opacity: 1; }
