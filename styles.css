@@ -18,7 +18,7 @@
   --shadow:           0 1px 4px rgba(0,0,0,0.06);          /* тень на карточках */
   /* Тень только для плавающих элементов (тултипы, попапы) */
   --shadow-float:     0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.07);
-  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font: 'Golos Text', system-ui, -apple-system, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
