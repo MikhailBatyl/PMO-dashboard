@@ -949,9 +949,9 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .cal-row-y td:first-child,
 .cal-row-g td:first-child { border-left: 3px solid var(--color-accent) !important; }
 
-/* ── Ячейки месяцев — цвет по статусу ── */
-.cal-cell-r { background: rgba(229, 57, 53, 0.04); }
-.cal-cell-y { background: rgba(217, 119, 6, 0.04); }
+/* ── Ячейки месяцев — фон нейтральный, цвет только у плашек ценностей ── */
+.cal-cell-r { background: transparent; }
+.cal-cell-y { background: transparent; }
 .cal-cell-g { background: transparent; }
 
 /* ── Временная подсветка колонок ── */
@@ -998,27 +998,32 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 }
 .cal-task-line:last-child { margin-bottom: 0; }
 
-/* Цвет плашки по статусу каждой ценности (класс задаётся в JS) */
-.cal-task-line.bar-g {
-  /* СЕРЫЙ — «В работе»: задача идёт по плану, но ещё не выполнена */
-  background: rgba(100, 116, 139, 0.10);
-  border-left-color: rgba(100, 116, 139, 0.55);
-}
-.cal-task-line.bar-done {
-  /* ЗЕЛЁНЫЙ — «Выполнено»: факт закрыт */
-  background: rgba(22, 163, 74, 0.10);
-  border-left-color: rgba(22, 163, 74, 0.65);
-}
-.cal-task-line.bar-y {
-  background: rgba(217, 119, 6, 0.10);
-  border-left-color: rgba(217, 119, 6, 0.60);
-}
+/* Цвет плашки по статусу — яркость градуируется: 🔴 max → 🟡 ярко → 🟢 умеренно → ✅ минимально */
+
+/* 🔴 Критично — максимальная яркость */
 .cal-task-line.bar-r {
-  background: rgba(229, 57, 53, 0.10);
-  border-left-color: rgba(229, 57, 53, 0.60);
+  background: rgba(229, 57, 53, 0.14);
+  border-left-color: rgba(229, 57, 53, 1.00);
 }
 
-/* Выполненные задачи — не приглушаем, зелёный цвет уже говорит сам за себя */
+/* 🟡 Контроль — яркое выделение */
+.cal-task-line.bar-y {
+  background: rgba(217, 119, 6, 0.12);
+  border-left-color: rgba(217, 119, 6, 0.90);
+}
+
+/* 🟢 В работе — умеренное, нейтральное */
+.cal-task-line.bar-g {
+  background: rgba(100, 116, 139, 0.07);
+  border-left-color: rgba(100, 116, 139, 0.40);
+}
+
+/* ✅ Выполнено — минимальная яркость */
+.cal-task-line.bar-done {
+  background: rgba(22, 163, 74, 0.04);
+  border-left-color: rgba(22, 163, 74, 0.25);
+}
+
 .cal-task-line.cal-task-done { opacity: 1; }
 
 .cal-task-nm {
