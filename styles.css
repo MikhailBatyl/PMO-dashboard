@@ -1160,20 +1160,6 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .mc-y    { color: var(--color-yellow); }
 .mc-g    { color: var(--color-green); } /* серый — В работе */
 
-/* ─── Вариант 1: цветная полоска сверху ячеек месяца по типу ──────────────── */
-
-/* Проект → синяя полоска (var(--color-accent)) */
-.cal-type-project .cal-td-m,
-.cal-type-project .cal-td-empty {
-  border-top: 3px solid var(--color-accent) !important;
-}
-
-/* Продукт → фиолетовая полоска */
-.cal-type-product .cal-td-m,
-.cal-type-product .cal-td-empty {
-  border-top: 3px solid #7c3aed !important;
-}
-
 /* ─── Двойной вертикальный разделитель между колонками месяцев ─────────────── */
 
 /* Шапка: двойная линия справа у всех месяцев кроме последнего */
