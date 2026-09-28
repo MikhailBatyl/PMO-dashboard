@@ -893,7 +893,30 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 
 .cal-th-name { width: 200px; }
 .cal-th-cnt  { text-align: center; width: 100px; padding: 4px 6px 8px; white-space: nowrap; }
-.cal-th-m    { /* равномерно по оставшемуся месту */ }
+
+/* ── Ячейка месяца в шапке — прозрачная, пилюля живёт внутри ── */
+.cal-th-m {
+  padding: 4px 3px 10px;   /* горизонтальный зазор между пилюлями */
+  border-bottom: none;     /* убираем общую линию — у пилюль своя граница */
+  background: transparent;
+  vertical-align: bottom;
+}
+
+/* ── Сама пилюля (badge) ── */
+.cal-month-badge {
+  display: block;
+  background: #eef0f3;
+  border-radius: 6px;
+  padding: 5px 4px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  transition: background 0.15s;
+}
 
 /* ── Ячейки строк-карточек ── */
 .cal-td {
@@ -958,14 +981,22 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 
 /* Текущий месяц — шапка */
 .cal-th-current {
-  color: var(--color-accent) !important;
-  background: rgba(26, 108, 255, 0.07) !important;
-  border-bottom: 2px solid var(--color-accent) !important;
+  color: inherit !important;
+  background: transparent !important;
+  border-bottom: none !important;
+}
+.cal-th-current .cal-month-badge {
+  background: rgba(26, 108, 255, 0.13);
+  color: var(--color-accent);
 }
 
 /* Прошлые месяцы — шапка приглушена */
 .cal-th-past {
-  color: #aaa !important;
+  color: inherit !important;
+}
+.cal-th-past .cal-month-badge {
+  background: #f5f6f8;
+  color: #c0c4cc !important;
 }
 
 /* Текущий месяц — ячейки */

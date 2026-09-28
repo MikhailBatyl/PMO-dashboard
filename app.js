@@ -833,7 +833,7 @@ function renderLaunchGrid(container, items) {
             <th class="cal-th cal-th-cnt">Ценности</th>
             ${months.map(m => {
               const tc = _monthCls(m);
-              return `<th class="cal-th cal-th-m ${tc === 'cal-col-current' ? 'cal-th-current' : tc === 'cal-col-past' ? 'cal-th-past' : ''}">${formatMonth(m)}</th>`;
+              return `<th class="cal-th cal-th-m ${tc === 'cal-col-current' ? 'cal-th-current' : tc === 'cal-col-past' ? 'cal-th-past' : ''}"><span class="cal-month-badge">${formatMonth(m)}</span></th>`;
             }).join('')}
           </tr>
         </thead>
