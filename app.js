@@ -155,14 +155,17 @@ function renderKPI() {
   document.getElementById('kpi-projects').textContent = projectCount;
   document.getElementById('kpi-products').textContent = productCount;
 
-  // Доля от общего числа ценностей
-  const _share = (n) => totalTasks ? `${n} из ${totalTasks} (${Math.round(n / totalTasks * 100)}%)` : '';
+  // Доля выполненных — от всех ценностей
+  const activeTasks = totalTasks - doneCount;   // ещё не выполнено
+  const _shareTotal  = (n) => totalTasks  ? `${n} из ${totalTasks}  (${Math.round(n / totalTasks  * 100)}%)` : '';
+  // Доля «В работе / Контроль / Критично» — от невыполненных (без учёта Done)
+  const _shareActive = (n) => activeTasks ? `${n} из ${activeTasks} (${Math.round(n / activeTasks * 100)}%)` : '';
   const _typeShare = (n) => (projectCount + productCount)
     ? `${n} из ${projectCount + productCount} (${Math.round(n / (projectCount + productCount) * 100)}%)` : '';
-  document.getElementById('kpi-done-share').textContent   = _share(doneCount);
-  document.getElementById('kpi-green-share').textContent  = _share(greenCount);
-  document.getElementById('kpi-yellow-share').textContent = _share(yellowCount);
-  document.getElementById('kpi-red-share').textContent    = _share(redCount);
+  document.getElementById('kpi-done-share').textContent   = _shareTotal(doneCount);
+  document.getElementById('kpi-green-share').textContent  = _shareActive(greenCount);
+  document.getElementById('kpi-yellow-share').textContent = _shareActive(yellowCount);
+  document.getElementById('kpi-red-share').textContent    = _shareActive(redCount);
   document.getElementById('kpi-total-share').textContent  = `${projectCount} пр. + ${productCount} прод.`;
   document.getElementById('kpi-projects-share').textContent = _typeShare(projectCount);
   document.getElementById('kpi-products-share').textContent = _typeShare(productCount);
@@ -711,7 +714,10 @@ function renderFunnelBoard(container) {
   });
 
   // Вспомогательные функции долей
-  const _sh  = (n) => totalTasks ? `${n} из ${totalTasks} (${Math.round(n / totalTasks * 100)}%)` : '';
+  const activeTask = totalTasks - dTask;   // невыполненные
+  const _shTotal  = (n) => totalTasks  ? `${n} из ${totalTasks}  (${Math.round(n / totalTasks  * 100)}%)` : '';
+  // В работе / Контроль / Критично — доля от невыполненных
+  const _shActive = (n) => activeTask  ? `${n} из ${activeTask}  (${Math.round(n / activeTask  * 100)}%)` : '';
   const _tsh = (n) => (projCount + prodCount)
     ? `${n} из ${projCount + prodCount} (${Math.round(n / (projCount + prodCount) * 100)}%)` : '';
 
@@ -738,25 +744,25 @@ function renderFunnelBoard(container) {
       <div class="kpi-card kpi-done">
         <div class="kpi-label">Выполнено</div>
         <div class="kpi-value">${dTask}</div>
-        <div class="kpi-share">${_sh(dTask)}</div>
+        <div class="kpi-share">${_shTotal(dTask)}</div>
         <div class="kpi-bar"></div>
       </div>
       <div class="kpi-card kpi-green">
         <div class="kpi-label">В работе</div>
         <div class="kpi-value">${gTask}</div>
-        <div class="kpi-share">${_sh(gTask)}</div>
+        <div class="kpi-share">${_shActive(gTask)}</div>
         <div class="kpi-bar"></div>
       </div>
       <div class="kpi-card kpi-yellow">
         <div class="kpi-label">Контроль</div>
         <div class="kpi-value">${yTask}</div>
-        <div class="kpi-share">${_sh(yTask)}</div>
+        <div class="kpi-share">${_shActive(yTask)}</div>
         <div class="kpi-bar"></div>
       </div>
       <div class="kpi-card kpi-red">
         <div class="kpi-label">Критично</div>
         <div class="kpi-value">${rTask}</div>
-        <div class="kpi-share">${_sh(rTask)}</div>
+        <div class="kpi-share">${_shActive(rTask)}</div>
         <div class="kpi-bar"></div>
       </div>
     </div>
