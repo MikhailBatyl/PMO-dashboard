@@ -919,9 +919,9 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .cal-item-row:hover { background: rgba(0,0,0,0.018); }
 
 /* Акцентная полоса статуса — 4px для выразительности */
-.cal-row-r { border-left: 4px solid var(--color-red); }
-.cal-row-y { border-left: 4px solid var(--color-yellow); }
-.cal-row-g { border-left: 4px solid var(--color-green); }
+.cal-row-r { border-left: 4px solid #94a3b8; }
+.cal-row-y { border-left: 4px solid #94a3b8; }
+.cal-row-g { border-left: 4px solid #94a3b8; }
 
 /* ── Ячейки месяцев — цвет по статусу ── */
 .cal-cell-r { background: transparent; }
