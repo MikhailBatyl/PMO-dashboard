@@ -54,16 +54,27 @@ function renderGantt(container, items) {
       }
 
       subgroup.tasks.forEach(task => {
+        // Задача считается «Выполнено» если функция isTaskDone доступна (из app.js)
+        const taskIsDone = typeof isTaskDone === 'function' ? isTaskDone(task) : false;
+
         const statusClass = statusToClass(task.status);
 
-        // Проверяем: есть ли факт в месяце, где плана нет → просрочка
-        const isOverdue = months.some(month => {
-          const tl = task.timeline[month] || { plan: false, fact: false };
-          return tl.fact && !tl.plan;
-        });
+        // Индекс последнего планового месяца (хронологически по порядку в массиве months)
+        const allPlanMonths = months.filter(m => (task.timeline[m] || {}).plan);
+        const lastPlanPos   = allPlanMonths.length > 0
+          ? months.indexOf(allPlanMonths[allPlanMonths.length - 1])
+          : -1;
+
+        // Просрочка = факт без плана ИЛИ задача не выполнена и есть месяцы после последнего плана
+        const hasMismatch  = months.some(m => { const tl = task.timeline[m] || {}; return tl.fact && !tl.plan; });
+        const hasCarryover = !taskIsDone && lastPlanPos >= 0 && lastPlanPos < months.length - 1;
+        const isOverdue    = hasMismatch || hasCarryover;
 
         const isFocused = typeof ganttFocusTask !== 'undefined' && ganttFocusTask && ganttFocusTask === task.task;
-        const rowClass = isOverdue ? 'gantt-task-row gantt-overdue' : `gantt-task-row ${statusClass}${isFocused ? ' gantt-focused' : ''}`;
+        const rowClass  = isOverdue
+          ? `gantt-task-row gantt-overdue${isFocused ? ' gantt-focused' : ''}`
+          : `gantt-task-row ${statusClass}${isFocused ? ' gantt-focused' : ''}`;
+
         // CSS-точка статуса (серый=В работе, жёлтый=Контроль, красный=Критично)
         const dotCls = task.status === '🟢' ? 'dot-g' : task.status === '🟡' ? 'dot-y' : 'dot-r';
 
@@ -74,15 +85,33 @@ function renderGantt(container, items) {
             <span class="gantt-owner">${escapeHtml(task.owner)}</span>
           </td>`;
 
-        months.forEach(month => {
+        months.forEach((month, monthIdx) => {
           const tl = task.timeline[month] || { plan: false, fact: false };
-          const planClass  = tl.plan ? 'gantt-strip-plan' : '';
-          const factClass  = tl.fact ? 'gantt-strip-fact' : (tl.plan ? 'gantt-strip-deviation' : '');
+
+          let planCls = '';
+          let factCls = '';
+
+          if (tl.plan && tl.fact) {
+            // Плановый месяц — факт подтверждён ✓
+            planCls = 'gantt-strip-plan';
+            factCls = 'gantt-strip-fact';
+          } else if (tl.plan && !tl.fact) {
+            // Плановый месяц — факта нет → отклонение (если не выполнено)
+            planCls = 'gantt-strip-plan';
+            factCls = taskIsDone ? '' : 'gantt-strip-deviation';
+          } else if (!tl.plan && tl.fact) {
+            // Факт зафиксирован в непланируемом месяце (поздняя поставка)
+            factCls = 'gantt-strip-fact';
+          } else if (!taskIsDone && lastPlanPos >= 0 && monthIdx > lastPlanPos) {
+            // Нет ни плана, ни факта, но задача не выполнена и план уже позади
+            // → отклонение протягивается вперёд
+            factCls = 'gantt-strip-deviation';
+          }
 
           html += `
             <td class="gantt-cell-month">
-              <div class="gantt-strip ${planClass}"></div>
-              <div class="gantt-strip ${factClass}"></div>
+              <div class="gantt-strip ${planCls}"></div>
+              <div class="gantt-strip ${factCls}"></div>
             </td>
           `;
         });
