@@ -13,11 +13,84 @@ let ganttFocusTask = null;    // задача для перехода в Ган�
 
 // ─── Инициализация ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+  initCustomSelects();
   setupNavigation();
   renderCurrentDate();
   setInterval(renderCurrentDate, 60_000);   // обновляем каждую минуту
   await loadData();
 });
+
+// ─── Кастомные дропдауны для фильтров ────────────────────────────────────────
+function initCustomSelects() {
+  ['filter-type', 'filter-owner', 'filter-status'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+
+    // Оборачиваем select в .cs-wrap
+    const wrap = document.createElement('div');
+    wrap.className = 'cs-wrap';
+    sel.parentNode.insertBefore(wrap, sel);
+    wrap.appendChild(sel);
+
+    // Кнопка-триггер
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'cs-trigger';
+    trigger.innerHTML = `<span class="cs-val"></span>
+      <svg class="cs-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>`;
+
+    // Список опций
+    const list = document.createElement('div');
+    list.className = 'cs-list';
+
+    wrap.appendChild(trigger);
+    wrap.appendChild(list);
+
+    // Скрываем нативный select (оставляем в DOM для совместимости с JS)
+    sel.style.cssText = 'position:absolute;opacity:0;pointer-events:none;width:0;height:0;overflow:hidden;';
+
+    function syncFromSelect() {
+      const val = sel.value;
+      const selOpt = sel.options[sel.selectedIndex];
+      trigger.querySelector('.cs-val').textContent = selOpt ? selOpt.text : '';
+      list.innerHTML = '';
+      Array.from(sel.options).forEach(opt => {
+        const item = document.createElement('div');
+        item.className = 'cs-opt' + (opt.value === val ? ' cs-opt-active' : '');
+        item.textContent = opt.text;
+        item.addEventListener('click', () => {
+          sel.value = opt.value;
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+          wrap.classList.remove('cs-open');
+          syncFromSelect();
+        });
+        list.appendChild(item);
+      });
+    }
+
+    syncFromSelect();
+
+    trigger.addEventListener('click', e => {
+      e.stopPropagation();
+      // Закрываем все остальные
+      document.querySelectorAll('.cs-wrap.cs-open').forEach(w => {
+        if (w !== wrap) w.classList.remove('cs-open');
+      });
+      wrap.classList.toggle('cs-open');
+    });
+
+    // Следим за динамическим обновлением опций (filter-owner)
+    new MutationObserver(() => syncFromSelect()).observe(sel, { childList: true });
+  });
+
+  // Клик вне дропдауна — закрываем все
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.cs-wrap.cs-open').forEach(w => w.classList.remove('cs-open'));
+  });
+}
 
 /**
  * Отображает текущую дату в формате ДД.ММ.ГГГГ в шапке
