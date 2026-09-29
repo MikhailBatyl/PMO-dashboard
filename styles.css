@@ -644,7 +644,15 @@ body {
 .gantt-strip-warning   { background: rgba(217, 119,  6,  0.28); } /* жёлтый = Контроль / план без факта */
 
 .gantt-subgroup-name { padding-left: 20px; font-style: italic; }
-.gantt-biz-note { font-size: 11px; color: var(--color-text-muted); margin-left: 8px; }
+.gantt-biz-note {
+  display: block;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin-top: 2px;
+  font-weight: 400;
+  line-height: 1.4;
+}
 
 .gantt-legend {
   display: flex;
