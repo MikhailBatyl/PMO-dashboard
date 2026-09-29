@@ -587,7 +587,7 @@ body {
   background: var(--color-surface) !important;
   z-index: 2;
 }
-.gantt-month-col { text-align: center; min-width: 100px; }
+.gantt-month-col { text-align: center; min-width: 72px; width: 72px; }
 
 .gantt-group-row.gantt-level1 { background: var(--color-surface2); font-weight: 600; }
 .gantt-group-row.gantt-level2 { background: #fafafa; color: var(--color-text-muted); }
@@ -627,46 +627,59 @@ body {
 .gantt-task-row.status-yellow { background: var(--color-yellow-bg); }
 .gantt-task-row.status-red    { background: var(--color-red-bg);    }
 
-/* ── Тонкие короткие pill-полоски ── */
+/* ── Компактные ячейки + таблетки ── */
 .gantt-cell-month {
-  padding: 7px 12px !important;
-  width: 100px;
-  min-width: 100px;
+  padding: 4px 6px !important;
+  width: 72px;
+  min-width: 72px;
   vertical-align: middle;
   border: 1px solid var(--color-border);
 }
 
+/* Текущий месяц — как в Календаре запуска */
+.gantt-col-current {
+  background: rgba(26, 108, 255, 0.04) !important;
+}
+.gantt-col-past {
+  background: #ffffff;
+}
+
 .gantt-strip {
-  height: 5px;
-  width: 70%;
+  height: 10px;
+  width: 92%;
   margin: 0 auto;
   border-radius: 20px;
   flex-shrink: 0;
 }
 .gantt-strip + .gantt-strip { margin-top: 3px; }
 
-/* Пустая полоска не занимает место */
-.gantt-strip:not(.gantt-strip-plan):not(.gantt-strip-fact):not(.gantt-strip-deviation):not(.gantt-strip-warning) {
-  height: 0;
-  margin: 0;
-  border: none;
-}
-
 .gantt-strip-plan {
-  background: rgba(26, 108, 255, 0.18);
-  border: 1px solid rgba(26, 108, 255, 0.45);
+  background: linear-gradient(90deg,
+    rgba(26, 108, 255, 0.55) 0%,
+    rgba(26, 108, 255, 0.12) 28%,
+    rgba(26, 108, 255, 0.12) 72%,
+    rgba(26, 108, 255, 0.55) 100%);
 }
 .gantt-strip-fact {
-  background: rgba(22, 163, 74, 0.38);
-  border: 1px solid rgba(22, 163, 74, 0.65);
+  background: linear-gradient(90deg,
+    rgba(22, 163, 74, 0.70) 0%,
+    rgba(22, 163, 74, 0.18) 28%,
+    rgba(22, 163, 74, 0.18) 72%,
+    rgba(22, 163, 74, 0.70) 100%);
 }
 .gantt-strip-deviation {
-  background: rgba(229, 57, 53, 0.18);
-  border: 1px solid rgba(229, 57, 53, 0.60);
+  background: linear-gradient(90deg,
+    rgba(229, 57, 53, 0.60) 0%,
+    rgba(229, 57, 53, 0.12) 28%,
+    rgba(229, 57, 53, 0.12) 72%,
+    rgba(229, 57, 53, 0.60) 100%);
 }
 .gantt-strip-warning {
-  background: rgba(217, 119, 6, 0.18);
-  border: 1px solid rgba(217, 119, 6, 0.55);
+  background: linear-gradient(90deg,
+    rgba(217, 119, 6, 0.60) 0%,
+    rgba(217, 119, 6, 0.12) 28%,
+    rgba(217, 119, 6, 0.12) 72%,
+    rgba(217, 119, 6, 0.60) 100%);
 }
 
 
@@ -692,8 +705,8 @@ body {
 .gantt-legend-item { display: flex; align-items: center; gap: 6px; }
 .gantt-legend-box {
   display: inline-block;
-  width: 20px;
-  height: 6px;
+  width: 22px;
+  height: 10px;
   border-radius: 20px;
 }
 

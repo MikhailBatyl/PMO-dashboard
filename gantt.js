@@ -65,7 +65,7 @@ function renderGantt(container, items) {
           <strong>${escapeHtml(item.name)}</strong>
           ${item.businessNote ? `<span class="gantt-biz-note">${item.businessNote.split(/\.\s+|\n/).filter(Boolean).map((s,i,a) => escapeHtml(s) + (i < a.length-1 ? '.' : '')).join('<br>')}</span>` : ''}
         </td>
-        ${months.map(() => `<td class="gantt-cell-month"></td>`).join('')}
+        ${months.map((_, i) => `<td class="gantt-cell-month ${i === refPos ? 'gantt-col-current' : i < refPos ? 'gantt-col-past' : ''}"></td>`).join('')}
       </tr>
     `;
 
@@ -75,7 +75,7 @@ function renderGantt(container, items) {
         html += `
           <tr class="gantt-group-row gantt-level2">
             <td class="gantt-task-name gantt-subgroup-name">— ${escapeHtml(subgroup.subgroupName)}</td>
-            ${months.map(() => `<td class="gantt-cell-month"></td>`).join('')}
+            ${months.map((_, i) => `<td class="gantt-cell-month ${i === refPos ? 'gantt-col-current' : i < refPos ? 'gantt-col-past' : ''}"></td>`).join('')}
           </tr>
         `;
       }
@@ -149,8 +149,11 @@ function renderGantt(container, items) {
             // 🟢 без факта — полоска пустая (нет видимого нарушения)
           }
 
+          const timeCls = monthIdx === refPos ? 'gantt-col-current'
+                        : monthIdx < refPos  ? 'gantt-col-past' : '';
+
           html += `
-            <td class="gantt-cell-month">
+            <td class="gantt-cell-month ${timeCls}">
               ${planCls ? `<div class="gantt-strip ${planCls}"></div>` : ''}
               ${factCls ? `<div class="gantt-strip ${factCls}"></div>` : ''}
             </td>
