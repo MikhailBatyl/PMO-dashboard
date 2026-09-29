@@ -129,7 +129,8 @@ function renderGantt(container, items) {
 
           } else if (!tl.plan && tl.fact) {
             // ── Факт без плана (поздняя поставка) ──────────────────────
-            factCls = 'gantt-strip-fact';
+            // Задача выполнена позже срока → всегда красное отклонение
+            factCls = 'gantt-strip-deviation';
 
           } else if (!taskIsDone && lastPlanPos >= 0
                      && monthIdx > lastPlanPos && monthIdx <= refPos) {
