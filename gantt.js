@@ -17,6 +17,28 @@ function renderGantt(container, items) {
   // Собираем все месяцы из данных
   const months = collectMonths(items);
 
+  // ── Текущий месяц в формате "Mon-YY" ─────────────────────────────────────
+  const _MS  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const _now = new Date();
+  const _nowStr = _MS[_now.getMonth()] + '-' + String(_now.getFullYear()).slice(2);
+  // Позиция текущего месяца в Гантте (опорная точка для отклонений)
+  // Если текущий месяц есть в массиве — берём его индекс.
+  // Если нас ещё нет в диапазоне (будущее) — refPos = -1 (отклонений нет).
+  // Если мы уже за диапазоном (прошлое) — refPos = последний месяц.
+  const _curIdx = months.indexOf(_nowStr);
+  const _nowNum = parseInt('20' + _nowStr.split('-')[1]) * 12
+                + _MS.indexOf(_nowStr.split('-')[0]);
+  const _firstNum = parseInt('20' + months[0].split('-')[1]) * 12
+                  + _MS.indexOf(months[0].split('-')[0]);
+  let refPos;
+  if (_curIdx >= 0) {
+    refPos = _curIdx;                   // текущий месяц виден в Гантте
+  } else if (_nowNum < _firstNum) {
+    refPos = -1;                        // мы ещё до начала диапазона → отклонений нет
+  } else {
+    refPos = months.length - 1;        // мы уже за диапазоном → все месяцы прошли
+  }
+
   let html = `
     <div class="gantt-wrapper">
       <table class="gantt-table">
@@ -65,9 +87,10 @@ function renderGantt(container, items) {
           ? months.indexOf(allPlanMonths[allPlanMonths.length - 1])
           : -1;
 
-        // Просрочка = факт без плана ИЛИ задача не выполнена и есть месяцы после последнего плана
+        // Просрочка = факт без плана ИЛИ задача не выполнена и текущий месяц уже пришёл
+        // после последнего планового (реальная дата зашла в следующий период)
         const hasMismatch  = months.some(m => { const tl = task.timeline[m] || {}; return tl.fact && !tl.plan; });
-        const hasCarryover = !taskIsDone && lastPlanPos >= 0 && lastPlanPos < months.length - 1;
+        const hasCarryover = !taskIsDone && lastPlanPos >= 0 && refPos > lastPlanPos;
         const isOverdue    = hasMismatch || hasCarryover;
 
         const isFocused = typeof ganttFocusTask !== 'undefined' && ganttFocusTask && ganttFocusTask === task.task;
@@ -99,9 +122,10 @@ function renderGantt(container, items) {
           } else if (!tl.plan && tl.fact) {
             // ── Факт без плана (поздняя поставка) ───────────────────────
             factCls = 'gantt-strip-fact';
-          } else if (!taskIsDone && lastPlanPos >= 0 && monthIdx > lastPlanPos) {
-            // ── После последнего планового месяца, задача не завершена ──
-            // → полоска отклонения: план пропущен, выходим за рамки
+          } else if (!taskIsDone && lastPlanPos >= 0
+                     && monthIdx > lastPlanPos && monthIdx <= refPos) {
+            // ── После последнего планового месяца И текущий реальный месяц
+            //    уже наступил → отклонение только за прошедшие периоды ──
             factCls = 'gantt-strip-deviation';
           }
 
