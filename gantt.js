@@ -100,13 +100,12 @@ function renderGantt(container, items) {
 
         const isFocused = typeof ganttFocusTask !== 'undefined' && ganttFocusTask && ganttFocusTask === task.task;
         const rowClass  = `gantt-task-row${isFocused ? ' gantt-focused' : ''}`;
-        const statusTitle = task.status === '🔴' ? 'Критично'
-                          : task.status === '🟡' ? 'Контроль'
-                          : taskIsDone ? 'Выполнено' : 'В работе';
+        const statusTitleText = typeof statusTitle === 'function' ? statusTitle(task)
+                          : (task.status === '🔴' ? 'Критично' : task.status === '🟡' ? 'Контроль' : taskIsDone ? 'Выполнено' : 'В работе');
 
         html += `<tr class="${rowClass}">
           <td class="gantt-task-name gantt-task-indent">
-            <span class="gantt-status" title="${statusTitle}">${statusIcon(task.status, taskIsDone)}</span>
+            <span class="gantt-status" title="${statusTitleText}">${statusIcon(task.status, taskIsDone)}</span>
             ${escapeHtml(task.task)}
             <span class="gantt-owner">${escapeHtml(task.owner)}</span>
           </td>`;
@@ -141,9 +140,9 @@ function renderGantt(container, items) {
                      && monthIdx > lastPlanPos && monthIdx <= refPos) {
             // ── Месяцы ПОСЛЕ последнего планового, которые уже наступили
             //    → цвет зависит от статуса задачи ───────────────────────
-            if (task.status === '🔴') {
+            if (statusKind(task.status) === 'red') {
               factCls = 'gantt-strip-deviation'; // красный — Критично
-            } else if (task.status === '🟡') {
+            } else if (statusKind(task.status) === 'yellow') {
               factCls = 'gantt-strip-warning';   // жёлтый — Контроль
             }
             // 🟢 без факта — полоска пустая (нет видимого нарушения)

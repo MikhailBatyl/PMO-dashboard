@@ -178,17 +178,44 @@ function switchTab(tab) {
   }
 }
 
-// ─── Вспомогательная функция: задача «Выполнена» если статус 🟢
-// и в последнем плановом месяце (хронологически) зафиксирован факт ────────────
+// ─── Нормализация статуса ────────────────────────────────────────────────────
+// В таблице встречаются 🟢, 🟡, 🔴 и нейтральный 🔘 («в работе»).
+// Пустой статус — задача ещё не начата, в «В работе» не входит.
+function statusKind(status) {
+  const s = String(status || '').trim();
+  if (!s) return 'empty';
+  if (s.indexOf('🔴') !== -1) return 'red';
+  if (s.indexOf('🟡') !== -1) return 'yellow';
+  return 'green'; // 🟢, 🔘 и прочие рабочие статусы
+}
+
+function classifyTask(task) {
+  const kind = statusKind(task.status);
+  if (kind === 'empty') return 'empty';
+  if (kind === 'red') return 'red';
+  if (kind === 'yellow') return 'yellow';
+  if (isTaskDone(task)) return 'done';
+  return 'green';
+}
+
+function statusTitle(task) {
+  const b = classifyTask(task);
+  if (b === 'red') return 'Критично';
+  if (b === 'yellow') return 'Контроль';
+  if (b === 'done') return 'Выполнено';
+  if (b === 'empty') return 'Не начато';
+  return 'В работе';
+}
+
+// Задача «Выполнена»: рабочий статус и в последнем плановом месяце есть факт
 const _MSEQ = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function _monthIdx(key) {
   const p = key.split('-');
   return parseInt('20' + p[1]) * 12 + _MSEQ.indexOf(p[0]);
 }
 function isTaskDone(task) {
-  if (task.status !== '🟢') return false;
+  if (statusKind(task.status) !== 'green') return false;
   const tl = task.timeline || {};
-  // Сортируем месяцы хронологически — Object.keys() не гарантирует порядок
   const planMonths = Object.keys(tl)
     .filter(m => tl[m] && tl[m].plan)
     .sort((a, b) => _monthIdx(a) - _monthIdx(b));
@@ -212,10 +239,11 @@ function renderKPI() {
     item.subgroups.forEach(sg => {
       sg.tasks.forEach(task => {
         totalTasks++;
-        if (task.status === '🔴') redCount++;
-        else if (task.status === '🟡') yellowCount++;
-        else if (isTaskDone(task)) doneCount++;
-        else greenCount++; // 🟢 без закрытого факта + пустой/иной статус → В работе
+        const bucket = classifyTask(task);
+        if (bucket === 'red') redCount++;
+        else if (bucket === 'yellow') yellowCount++;
+        else if (bucket === 'done') doneCount++;
+        else if (bucket === 'green') greenCount++;
       });
     });
   });
@@ -302,7 +330,7 @@ function getFilteredItems() {
     const filteredSubgroups = item.subgroups.map(sg => {
       const filteredTasks = sg.tasks.filter(task => {
         if (filterOwner && task.owner !== filterOwner) return false;
-        if (filterStatus && task.status !== filterStatus) return false;
+        if (filterStatus && statusKind(task.status) !== statusKind(filterStatus)) return false;
         return true;
       });
       if (filteredTasks.length === 0) return null;
@@ -349,8 +377,8 @@ function getItemSummary(item) {
   const priorityLabel = minPriority === 1 ? 'Высокий' : minPriority === 2 ? 'Средний' : minPriority != null ? 'Низкий' : '—';
 
   // Итоговый статус
-  const hasRed    = tasks.some(t => t.status === '🔴');
-  const hasYellow = tasks.some(t => t.status === '🟡');
+  const hasRed    = tasks.some(t => statusKind(t.status) === 'red');
+  const hasYellow = tasks.some(t => statusKind(t.status) === 'yellow');
   const overallStatus = hasRed ? '🔴' : hasYellow ? '🟡' : '🟢';
 
   // Тренд — наихудший
@@ -420,8 +448,8 @@ function renderPortfolio() {
   items.forEach(item => {
     // Цвет полосы по худшему статусу прикреплённых ценностей
     const _allTasks = item.subgroups.flatMap(sg => sg.tasks);
-    const _hasRed    = _allTasks.some(t => t.status === '🔴');
-    const _hasYellow = _allTasks.some(t => t.status === '🟡');
+    const _hasRed    = _allTasks.some(t => statusKind(t.status) === 'red');
+    const _hasYellow = _allTasks.some(t => statusKind(t.status) === 'yellow');
     const _headerColor = _hasRed ? 'header-red' : _hasYellow ? 'header-yellow' : 'header-green';
 
     html += `
@@ -455,7 +483,7 @@ function renderPortfolio() {
             <td>${escHtml(task.owner)}</td>
             <td><span class="prio-badge prio-${prioLabel(task.priority)}">${prioLabel(task.priority)}</span></td>
             <td>
-              <span class="status-selector" data-task="${escHtml(task.task)}" data-field="status" title="${task.status === '🔴' ? 'Критично' : task.status === '🟡' ? 'Контроль' : isTaskDone(task) ? 'Выполнено' : 'В работе'}">
+              <span class="status-selector" data-task="${escHtml(task.task)}" data-field="status" title="${statusTitle(task)}">
                 ${statusIcon(task.status, isTaskDone(task))}
               </span>
             </td>
@@ -727,8 +755,9 @@ function renderRisks() {
   let html = `<div class="risks-list">`;
   riskyTasks.forEach(task => {
     const done = isTaskDone(task);
-    const severityLabel = task.status === '🔴' ? 'Критично' : task.status === '🟡' ? 'Контроль' : done ? 'Выполнено' : 'В работе';
-    const severityCls   = task.status === '🔴' ? 'risk-severity-red' : task.status === '🟡' ? 'risk-severity-yellow' : done ? 'risk-severity-done' : 'risk-severity-green';
+    const severityLabel = statusTitle(task);
+    const bucket = classifyTask(task);
+    const severityCls   = bucket === 'red' ? 'risk-severity-red' : bucket === 'yellow' ? 'risk-severity-yellow' : bucket === 'done' ? 'risk-severity-done' : 'risk-severity-green';
     html += `
       <div class="risk-card ${statusToClass(task.status)}">
         <div class="risk-header">
@@ -753,13 +782,14 @@ function renderRisks() {
 
 // ─── SVG-иконки статуса ───────────────────────────────────────────────────────
 function statusIcon(status, isDone) {
-  if (status === '🔴')
+  const kind = statusKind(status);
+  if (kind === 'red')
     return `<svg class="status-icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
       <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="#e53935"/>
       <line x1="12" y1="9" x2="12" y2="13" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
       <circle cx="12" cy="17.5" r="1.2" fill="white"/>
     </svg>`;
-  if (status === '🟡')
+  if (kind === 'yellow')
     return `<svg class="status-icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
       <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="#d97706"/>
       <line x1="12" y1="9" x2="12" y2="13" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
@@ -770,7 +800,11 @@ function statusIcon(status, isDone) {
       <circle cx="8" cy="8" r="7" fill="#16a34a"/>
       <path d="M5 8l2.2 2.2 3.8-3.8" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
     </svg>`;
-  // 🟢 В работе
+  if (kind === 'empty')
+    return `<svg class="status-icon" width="16" height="16" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="6.5" fill="none" stroke="#c0c4cc" stroke-width="1.5"/>
+    </svg>`;
+  // В работе (🟢 / 🔘)
   return `<svg class="status-icon" width="16" height="16" viewBox="0 0 16 16">
     <circle cx="8" cy="8" r="7" fill="#64748b"/>
   </svg>`;
@@ -778,9 +812,10 @@ function statusIcon(status, isDone) {
 
 // ─── Вспомогательные функции ──────────────────────────────────────────────────
 function statusToClass(status) {
-  if (status === '🟢') return 'status-green';
-  if (status === '🟡') return 'status-yellow';
-  if (status === '🔴') return 'status-red';
+  const kind = statusKind(status);
+  if (kind === 'green') return 'status-green';
+  if (kind === 'yellow') return 'status-yellow';
+  if (kind === 'red') return 'status-red';
   return '';
 }
 
@@ -837,10 +872,11 @@ function renderFunnelBoard(container) {
     item.subgroups.forEach(sg => {
       sg.tasks.forEach(t => {
         totalTasks++;
-        if (t.status === '🔴') rTask++;
-        else if (t.status === '🟡') yTask++;
-        else if (isTaskDone(t)) dTask++;
-        else gTask++; // 🟢 без закрытого факта + пустой/иной статус → В работе
+        const bucket = classifyTask(t);
+        if (bucket === 'red') rTask++;
+        else if (bucket === 'yellow') yTask++;
+        else if (bucket === 'done') dTask++;
+        else if (bucket === 'green') gTask++;
       });
     });
   });
@@ -981,8 +1017,8 @@ function renderLaunchGrid(container, items) {
 
   items.forEach(item => {
     const allTasks = item.subgroups.flatMap(sg => sg.tasks);
-    const hasR = allTasks.some(t => t.status === '🔴');
-    const hasY = allTasks.some(t => t.status === '🟡');
+    const hasR = allTasks.some(t => statusKind(t.status) === 'red');
+    const hasY = allTasks.some(t => statusKind(t.status) === 'yellow');
     const rowCls = hasR ? 'cal-row-r' : hasY ? 'cal-row-y' : 'cal-row-g';
 
     // Для каждой задачи определяем её «последний месяц запуска»
@@ -1002,18 +1038,10 @@ function renderLaunchGrid(container, items) {
 
     // Подсчёт статусов для мини-бара (после taskLaunchMonth чтобы определить «Выполнено»)
     const total    = allTasks.length;
-    const yCnt     = allTasks.filter(t => t.status === '🟡').length;
-    const rCnt     = allTasks.filter(t => t.status === '🔴').length;
-    // «Выполнено» = не 🔴, не 🟡 + в месяце запуска есть и план и факт + статус 🟢
-    const doneCnt  = allTasks.filter(t => {
-      if (t.status !== '🟢') return false;
-      const lm = taskLaunchMonth.get(t.task);
-      if (!lm) return false;
-      const tl = t.timeline[lm] || {};
-      return !!(tl.plan && tl.fact);
-    }).length;
-    // «В работе» = не 🔴, не 🟡, не выполнено (пустой статус сюда тоже входит)
-    const gCnt     = total - yCnt - rCnt - doneCnt;
+    const doneCnt  = allTasks.filter(t => classifyTask(t) === 'done').length;
+    const yCnt     = allTasks.filter(t => classifyTask(t) === 'yellow').length;
+    const rCnt     = allTasks.filter(t => classifyTask(t) === 'red').length;
+    const gCnt     = allTasks.filter(t => classifyTask(t) === 'green').length;
 
     // Считаем проценты прямо по каждому счётчику
     const donePct  = total && doneCnt ? Math.round(doneCnt / total * 100) : 0;
@@ -1060,15 +1088,14 @@ function renderLaunchGrid(container, items) {
           if (!tasksInMonth.length) return `<td class="cal-td cal-td-m cal-td-empty ${finalTimeCls}"></td>`;
 
           // Цвет ячейки по наихудшему статусу
-          const cHasR = tasksInMonth.some(t => t.status === '🔴');
-          const cHasY = tasksInMonth.some(t => t.status === '🟡');
+          const cHasR = tasksInMonth.some(t => statusKind(t.status) === 'red');
+          const cHasY = tasksInMonth.some(t => statusKind(t.status) === 'yellow');
           const cellCls = cHasR ? 'cal-cell-r' : cHasY ? 'cal-cell-y' : 'cal-cell-g';
 
           const lines = tasksInMonth.map(t => {
-            const tl = t.timeline[m] || {};
-            const done = tl.plan && tl.fact && t.status === '🟢';
-            /* done (факт закрыт) → зелёный «Выполнено»; 🟢 но не done → серый «В норме» */
-            const barCls = t.status === '🔴' ? 'bar-r' : t.status === '🟡' ? 'bar-y' : done ? 'bar-done' : 'bar-g';
+            const bucket = classifyTask(t);
+            const done = bucket === 'done';
+            const barCls = bucket === 'red' ? 'bar-r' : bucket === 'yellow' ? 'bar-y' : done ? 'bar-done' : 'bar-g';
             return `<div class="cal-task-line ${barCls}${done ? ' cal-task-done' : ''}"
               data-task="${escHtml(t.task)}"
               data-desc="${escHtml(t.description || '')}"
