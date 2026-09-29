@@ -114,19 +114,35 @@ function renderGantt(container, items) {
           let planCls = '';
           let factCls = '';
 
-          if (tl.plan) {
-            // ── Плановый месяц ──────────────────────────────────────────
+          if (tl.plan && tl.fact) {
+            // ── Плановый месяц, факт подтверждён ✓ ────────────────────
             planCls = 'gantt-strip-plan';
-            if (tl.fact) factCls = 'gantt-strip-fact'; // факт закрыт в этом месяце
-            // Нет факта в плановом месяце — это просто «в работе», красного нет
-          } else if (!tl.plan && tl.fact) {
-            // ── Факт без плана (поздняя поставка) ───────────────────────
             factCls = 'gantt-strip-fact';
+
+          } else if (tl.plan && !tl.fact) {
+            // ── Плановый месяц, факта нет ──────────────────────────────
+            planCls = 'gantt-strip-plan';
+            if (monthIdx <= refPos) {
+              // Плановый период уже наступил, а факт не подтверждён →
+              // жёлтая полоска «должно быть в работе»
+              factCls = 'gantt-strip-warning';
+            }
+            // Будущий плановый месяц — нижняя полоска пустая
+
+          } else if (!tl.plan && tl.fact) {
+            // ── Факт без плана (поздняя поставка) ──────────────────────
+            factCls = 'gantt-strip-fact';
+
           } else if (!taskIsDone && lastPlanPos >= 0
                      && monthIdx > lastPlanPos && monthIdx <= refPos) {
-            // ── После последнего планового месяца И текущий реальный месяц
-            //    уже наступил → отклонение только за прошедшие периоды ──
-            factCls = 'gantt-strip-deviation';
+            // ── Месяцы ПОСЛЕ последнего планового, которые уже наступили
+            //    → цвет зависит от статуса задачи ───────────────────────
+            if (task.status === '🔴') {
+              factCls = 'gantt-strip-deviation'; // красный — Критично
+            } else if (task.status === '🟡') {
+              factCls = 'gantt-strip-warning';   // жёлтый — Контроль
+            }
+            // 🟢 без факта — полоска пустая (нет видимого нарушения)
           }
 
           html += `

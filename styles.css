@@ -561,7 +561,8 @@ body {
 
 .gantt-strip-plan      { background: rgba(26, 108, 255, 0.25); }
 .gantt-strip-fact      { background: rgba(22, 163, 74,  0.40); } /* зелёный = Выполнено/Факт */
-.gantt-strip-deviation { background: rgba(229, 57, 53,  0.18); }
+.gantt-strip-deviation { background: rgba(229, 57, 53,  0.30); } /* красный = Критично + просрочка */
+.gantt-strip-warning   { background: rgba(217, 119,  6,  0.28); } /* жёлтый = Контроль / план без факта */
 
 .gantt-subgroup-name { padding-left: 20px; font-style: italic; }
 .gantt-biz-note { font-size: 11px; color: var(--color-text-muted); margin-left: 8px; }
