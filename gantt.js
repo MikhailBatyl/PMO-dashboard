@@ -100,13 +100,13 @@ function renderGantt(container, items) {
 
         const isFocused = typeof ganttFocusTask !== 'undefined' && ganttFocusTask && ganttFocusTask === task.task;
         const rowClass  = `gantt-task-row${isFocused ? ' gantt-focused' : ''}`;
-
-        // CSS-точка статуса (серый=В работе, жёлтый=Контроль, красный=Критично)
-        const dotCls = task.status === '🟢' ? 'dot-g' : task.status === '🟡' ? 'dot-y' : 'dot-r';
+        const statusTitle = task.status === '🔴' ? 'Критично'
+                          : task.status === '🟡' ? 'Контроль'
+                          : taskIsDone ? 'Выполнено' : 'В работе';
 
         html += `<tr class="${rowClass}">
           <td class="gantt-task-name gantt-task-indent">
-            <span class="status-dot ${dotCls}"></span>
+            <span class="gantt-status" title="${statusTitle}">${statusIcon(task.status, taskIsDone)}</span>
             ${escapeHtml(task.task)}
             <span class="gantt-owner">${escapeHtml(task.owner)}</span>
           </td>`;

@@ -608,6 +608,14 @@ body {
 .gantt-task-indent { padding-left: 24px !important; }
 .gantt-task-name { min-width: 200px; max-width: 200px; }
 
+.gantt-status {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.gantt-status .status-icon { display: block; }
+
 .gantt-owner { color: var(--color-text-muted); font-size: 11px; margin-left: 6px; }
 
 /* CSS-точка статуса (заменяет emoji в Гантте) */
@@ -708,7 +716,11 @@ body {
   flex-wrap: wrap;
 }
 
-.risk-status { font-size: 18px; flex-shrink: 0; }
+.risk-status {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
 
 /* Текстовые бейджи тяжести (добавляются из app.js) */
 .risk-severity {
@@ -722,6 +734,7 @@ body {
 .risk-severity-red    { color: var(--color-red);    background: rgba(229,57,53,0.10); }
 .risk-severity-yellow { color: var(--color-yellow); background: rgba(217,119,6,0.10); }
 .risk-severity-green  { color: var(--color-green);  background: rgba(100,116,139,0.10); } /* серый — В работе */
+.risk-severity-done   { color: var(--color-done);   background: rgba(22,163,74,0.10); }
 
 .risk-task       { font-weight: 600; flex: 1; font-size: 13px; }
 .risk-owner      { color: var(--color-text-muted); font-size: 12px; }
