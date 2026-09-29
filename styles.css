@@ -522,14 +522,60 @@ body {
   white-space: nowrap;
 }
 
+/* ── Заголовок Гантта — стиль Календаря ── */
 .gantt-table thead th {
-  background: var(--color-surface2);
+  background: transparent;
   text-align: center;
   color: var(--color-text-muted);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 700;
+  border: none;
+  border-bottom: 2px solid var(--color-border);
+  padding: 4px 4px 10px;
+  vertical-align: bottom;
+}
+
+/* Колонка «Задача» — левый заголовок */
+.gantt-task-col {
+  text-align: left !important;
+  padding-left: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+/* Бейдж месяца */
+.gantt-month-badge {
+  display: block;
+  background: #eef0f3;
+  border-radius: 6px;
+  padding: 5px 6px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+/* Текущий месяц — акцент синим */
+.gantt-th-current .gantt-month-badge {
+  background: rgba(26, 108, 255, 0.13);
+  color: var(--color-accent);
+}
+
+/* Прошлые месяцы — приглушены */
+.gantt-th-past .gantt-month-badge {
+  background: #f5f6f8;
+  color: #c0c4cc;
+}
+
+/* Будущие — стандартный бейдж */
+.gantt-th-future .gantt-month-badge {
+  background: #eef0f3;
+  color: var(--color-text-muted);
 }
 
 .gantt-task-col {

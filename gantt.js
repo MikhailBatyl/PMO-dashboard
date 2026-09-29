@@ -45,11 +45,16 @@ function renderGantt(container, items) {
         <thead>
           <tr>
             <th class="gantt-task-col">Задача</th>
-            ${months.map(m => `<th class="gantt-month-col">${m}</th>`).join('')}
+            ${months.map((m, i) => {
+              const cls = i === refPos ? 'gantt-th-current'
+                        : i < refPos  ? 'gantt-th-past'
+                        : 'gantt-th-future';
+              return `<th class="gantt-month-col ${cls}"><span class="gantt-month-badge">${m}</span></th>`;
+            }).join('')}
           </tr>
         </thead>
         <tbody>
-  `;
+    `;
 
   items.forEach(item => {
     // Строка заголовка продукта/проекта
