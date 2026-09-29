@@ -653,34 +653,10 @@ body {
 }
 .gantt-strip + .gantt-strip { margin-top: 3px; }
 
-.gantt-strip-plan {
-  background: linear-gradient(90deg,
-    rgba(26, 108, 255, 0.55) 0%,
-    rgba(26, 108, 255, 0.12) 28%,
-    rgba(26, 108, 255, 0.12) 72%,
-    rgba(26, 108, 255, 0.55) 100%);
-}
-.gantt-strip-fact {
-  background: linear-gradient(90deg,
-    rgba(22, 163, 74, 0.70) 0%,
-    rgba(22, 163, 74, 0.18) 28%,
-    rgba(22, 163, 74, 0.18) 72%,
-    rgba(22, 163, 74, 0.70) 100%);
-}
-.gantt-strip-deviation {
-  background: linear-gradient(90deg,
-    rgba(229, 57, 53, 0.60) 0%,
-    rgba(229, 57, 53, 0.12) 28%,
-    rgba(229, 57, 53, 0.12) 72%,
-    rgba(229, 57, 53, 0.60) 100%);
-}
-.gantt-strip-warning {
-  background: linear-gradient(90deg,
-    rgba(217, 119, 6, 0.60) 0%,
-    rgba(217, 119, 6, 0.12) 28%,
-    rgba(217, 119, 6, 0.12) 72%,
-    rgba(217, 119, 6, 0.60) 100%);
-}
+.gantt-strip-plan      { background: rgba(26, 108, 255, 0.35); }
+.gantt-strip-fact      { background: rgba(22, 163, 74,  0.50); }
+.gantt-strip-deviation { background: rgba(229, 57, 53,  0.35); }
+.gantt-strip-warning   { background: rgba(217, 119, 6,  0.35); }
 
 
 .gantt-subgroup-name { padding-left: 20px; font-style: italic; }
