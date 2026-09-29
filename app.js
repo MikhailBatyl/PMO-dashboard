@@ -207,6 +207,23 @@ function statusTitle(task) {
   return 'В работе';
 }
 
+function taskHasPlan(task) {
+  const tl = task.timeline || {};
+  return Object.keys(tl).some(m => tl[m] && tl[m].plan);
+}
+
+function incompleteReasons(task) {
+  const reasons = [];
+  if (statusKind(task.status) === 'empty') reasons.push('Нет статуса');
+  if (!taskHasPlan(task)) reasons.push('Нет плана');
+  if (task.priority == null) reasons.push('Нет приоритета');
+  const kind = statusKind(task.status);
+  if ((kind === 'red' || kind === 'yellow') && (!task.risk || task.risk === '-')) {
+    reasons.push('Нет ключевого риска');
+  }
+  return reasons;
+}
+
 // Задача «Выполнена»: рабочий статус и в последнем плановом месяце есть факт
 const _MSEQ = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function _monthIdx(key) {
@@ -511,6 +528,67 @@ function renderPortfolio() {
   attachEditHandlers(container);
   attachTooltipHandlers(container);
   attachPeriodHandlers(container);
+  renderDataGaps();
+}
+
+function collectIncompleteByOwner(items) {
+  const byOwner = new Map();
+  (items || []).forEach(item => {
+    item.subgroups.forEach(sg => {
+      sg.tasks.forEach(task => {
+        const reasons = incompleteReasons(task);
+        if (!reasons.length) return;
+        const owner = (task.owner || '').trim() || 'Без ответственного';
+        if (!byOwner.has(owner)) byOwner.set(owner, []);
+        byOwner.get(owner).push({
+          task: task.task,
+          itemName: item.name,
+          itemType: item.type,
+          reasons
+        });
+      });
+    });
+  });
+  return [...byOwner.entries()]
+    .map(([owner, gaps]) => ({ owner, gaps }))
+    .sort((a, b) => b.gaps.length - a.gaps.length || a.owner.localeCompare(b.owner, 'ru'));
+}
+
+function renderDataGaps() {
+  const box = document.getElementById('data-gaps');
+  if (!box) return;
+  const groups = collectIncompleteByOwner(getFilteredItems());
+  if (!groups.length) {
+    box.innerHTML = '';
+    return;
+  }
+  const _val = (n) => {
+    const m10 = n % 10, m100 = n % 100;
+    if (m100 >= 11 && m100 <= 14) return `${n} ценностей`;
+    if (m10 === 1) return `${n} ценность`;
+    if (m10 >= 2 && m10 <= 4) return `${n} ценности`;
+    return `${n} ценностей`;
+  };
+  box.innerHTML = `
+    <div class="gaps-block">
+      <h3>Неполные данные</h3>
+      ${groups.map(g => `
+        <div class="gaps-card">
+          <div class="gaps-card-head">
+            <span class="gaps-owner">${escHtml(g.owner)}</span>
+            <span class="gaps-count">${_val(g.gaps.length)}</span>
+          </div>
+          ${g.gaps.map(x => `
+            <div class="gaps-item">
+              <div class="gaps-task">${escHtml(x.itemType)} · ${escHtml(x.itemName.replace(/\n/g, ' '))}</div>
+              <div class="gaps-value">${escHtml(x.task)}</div>
+              <div class="gaps-reason">${x.reasons.map(r => escHtml(r)).join(' · ')}</div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 /**
