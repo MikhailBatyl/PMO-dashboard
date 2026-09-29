@@ -151,8 +151,8 @@ function renderGantt(container, items) {
 
           html += `
             <td class="gantt-cell-month">
-              <div class="gantt-strip ${planCls}"></div>
-              <div class="gantt-strip ${factCls}"></div>
+              ${planCls ? `<div class="gantt-strip ${planCls}"></div>` : ''}
+              ${factCls ? `<div class="gantt-strip ${factCls}"></div>` : ''}
             </td>
           `;
         });
