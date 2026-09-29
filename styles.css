@@ -627,8 +627,9 @@ body {
 .gantt-task-row.status-yellow { background: var(--color-yellow-bg); }
 .gantt-task-row.status-red    { background: var(--color-red-bg);    }
 
+/* ── Вариант 1: тонкие pill-полоски (8px) ── */
 .gantt-cell-month {
-  padding: 0 !important;
+  padding: 4px 3px !important;
   width: 100px;
   min-width: 100px;
   vertical-align: top;
@@ -636,28 +637,41 @@ body {
 }
 
 .gantt-strip {
-  height: 16px;
-  width: calc(100% - 10px);
-  margin: 0 5px;
+  height: 8px;
+  width: 100%;
   border-radius: 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
+  justify-content: flex-end;   /* треугольник у правого края */
+  padding-right: 2px;
   flex-shrink: 0;
 }
-.gantt-strip + .gantt-strip { margin-top: 0; }
+.gantt-strip + .gantt-strip { margin-top: 3px; }
 
-.gantt-strip-plan      { background: rgba(26, 108, 255, 0.25); }
-.gantt-strip-fact      { background: rgba(22, 163, 74,  0.45); }
-.gantt-strip-deviation { background: rgba(229, 57, 53,  0.22); }
-.gantt-strip-warning   { background: rgba(217, 119,  6,  0.25); }
+.gantt-strip-plan {
+  background: rgba(26, 108, 255, 0.18);
+  border: 1px solid rgba(26, 108, 255, 0.45);
+}
+.gantt-strip-fact {
+  background: rgba(22, 163, 74, 0.38);
+  border: 1px solid rgba(22, 163, 74, 0.65);
+}
+.gantt-strip-deviation {
+  background: rgba(229, 57, 53, 0.18);
+  border: 1px solid rgba(229, 57, 53, 0.60);
+}
+.gantt-strip-warning {
+  background: rgba(217, 119, 6, 0.18);
+  border: 1px solid rgba(217, 119, 6, 0.55);
+}
 
 /* Иконка-треугольник внутри красной полоски */
 .gantt-warn-icon {
   display: block;
   flex-shrink: 0;
-  opacity: 0.85;
+  width: 10px;
+  height: 10px;
+  margin-top: -1px;   /* компенсируем выступание за 8px */
 }
 
 .gantt-subgroup-name { padding-left: 20px; font-style: italic; }
