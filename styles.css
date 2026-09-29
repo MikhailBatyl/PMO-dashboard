@@ -710,16 +710,45 @@ body {
 
 .risk-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   margin-bottom: 6px;
-  flex-wrap: wrap;
+}
+
+.risk-titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.risk-project {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.risk-task {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-text);
+  line-height: 1.35;
+}
+
+.risk-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-top: 1px;
 }
 
 .risk-status {
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
+  margin-top: 1px;
 }
 
 /* Текстовые бейджи тяжести (добавляются из app.js) */
@@ -736,11 +765,9 @@ body {
 .risk-severity-green  { color: var(--color-green);  background: rgba(100,116,139,0.10); } /* серый — В работе */
 .risk-severity-done   { color: var(--color-done);   background: rgba(22,163,74,0.10); }
 
-.risk-task       { font-weight: 600; flex: 1; font-size: 13px; }
-.risk-owner      { color: var(--color-text-muted); font-size: 12px; }
-.risk-breadcrumb { color: var(--color-accent); font-size: 11px; margin-left: auto; }
+.risk-owner      { color: var(--color-text-muted); font-size: 12px; white-space: nowrap; }
 
-.risk-row   { font-size: 13px; margin-top: 4px; }
+.risk-row   { font-size: 13px; margin-top: 4px; padding-left: 28px; }
 .risk-label { color: var(--color-text-muted); }
 .risk-text  { margin-left: 4px; }
 

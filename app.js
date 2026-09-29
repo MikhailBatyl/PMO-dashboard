@@ -709,7 +709,7 @@ function renderRisks() {
     item.subgroups.forEach(sg => {
       sg.tasks.forEach(task => {
         if (task.risk !== '-' || task.deviationReason !== '-') {
-          riskyTasks.push({ ...task, itemName: item.name, subgroupName: sg.subgroupName });
+          riskyTasks.push({ ...task, itemName: item.name, itemType: item.type, subgroupName: sg.subgroupName });
         }
       });
     });
@@ -733,10 +733,14 @@ function renderRisks() {
       <div class="risk-card ${statusToClass(task.status)}">
         <div class="risk-header">
           <span class="risk-status" title="${severityLabel}">${statusIcon(task.status, done)}</span>
-          <span class="risk-task">${escHtml(task.task)}</span>
-          <span class="risk-owner">${escHtml(task.owner)}</span>
-          <span class="risk-breadcrumb">${escHtml(task.itemName)}${task.subgroupName ? ' / ' + escHtml(task.subgroupName) : ''}</span>
-          <span class="risk-severity ${severityCls}">${severityLabel}</span>
+          <div class="risk-titles">
+            <div class="risk-project">${escHtml(task.itemType)} · ${escHtml(task.itemName)}</div>
+            <div class="risk-task">${escHtml(task.task)}</div>
+          </div>
+          <div class="risk-meta">
+            <span class="risk-owner">${escHtml(task.owner)}</span>
+            <span class="risk-severity ${severityCls}">${severityLabel}</span>
+          </div>
         </div>
         ${task.risk !== '-' ? `<div class="risk-row"><span class="risk-label">⚠️ Риск:</span> <span class="risk-text">${escHtml(task.risk)}</span></div>` : ''}
         ${task.deviationReason !== '-' ? `<div class="risk-row"><span class="risk-label">↩ Причина:</span> <span class="risk-text">${escHtml(task.deviationReason)}</span></div>` : ''}
