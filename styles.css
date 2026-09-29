@@ -291,11 +291,11 @@ body {
 }
 
 .portfolio-table th {
-  background: var(--color-surface2);
+  background: transparent;
   color: var(--color-text-muted);
   text-align: left;
-  padding: 9px 14px;
-  border-bottom: 1px solid var(--color-border);
+  padding: 4px 14px 8px;
+  border-bottom: 2px solid var(--color-border);
   font-weight: 700;
   font-size: 11px;
   text-transform: uppercase;
