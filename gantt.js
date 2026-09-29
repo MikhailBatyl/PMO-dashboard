@@ -91,20 +91,17 @@ function renderGantt(container, items) {
           let planCls = '';
           let factCls = '';
 
-          if (tl.plan && tl.fact) {
-            // Плановый месяц — факт подтверждён ✓
+          if (tl.plan) {
+            // ── Плановый месяц ──────────────────────────────────────────
             planCls = 'gantt-strip-plan';
-            factCls = 'gantt-strip-fact';
-          } else if (tl.plan && !tl.fact) {
-            // Плановый месяц — факта нет → отклонение (если не выполнено)
-            planCls = 'gantt-strip-plan';
-            factCls = taskIsDone ? '' : 'gantt-strip-deviation';
+            if (tl.fact) factCls = 'gantt-strip-fact'; // факт закрыт в этом месяце
+            // Нет факта в плановом месяце — это просто «в работе», красного нет
           } else if (!tl.plan && tl.fact) {
-            // Факт зафиксирован в непланируемом месяце (поздняя поставка)
+            // ── Факт без плана (поздняя поставка) ───────────────────────
             factCls = 'gantt-strip-fact';
           } else if (!taskIsDone && lastPlanPos >= 0 && monthIdx > lastPlanPos) {
-            // Нет ни плана, ни факта, но задача не выполнена и план уже позади
-            // → отклонение протягивается вперёд
+            // ── После последнего планового месяца, задача не завершена ──
+            // → полоска отклонения: план пропущен, выходим за рамки
             factCls = 'gantt-strip-deviation';
           }
 
