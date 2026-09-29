@@ -648,6 +648,7 @@ body {
 
 .gantt-legend {
   display: flex;
+  justify-content: flex-end;
   gap: 20px;
   padding: 8px 4px 12px;
   font-size: 12px;
