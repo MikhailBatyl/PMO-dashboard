@@ -637,13 +637,9 @@ body {
 }
 
 .gantt-strip {
-  height: 8px;
+  height: 5px;
   width: 100%;
   border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;   /* треугольник у правого края */
-  padding-right: 2px;
   flex-shrink: 0;
 }
 .gantt-strip + .gantt-strip { margin-top: 3px; }
@@ -665,14 +661,6 @@ body {
   border: 1px solid rgba(217, 119, 6, 0.55);
 }
 
-/* Иконка-треугольник внутри красной полоски */
-.gantt-warn-icon {
-  display: block;
-  flex-shrink: 0;
-  width: 10px;
-  height: 10px;
-  margin-top: -1px;   /* компенсируем выступание за 8px */
-}
 
 .gantt-subgroup-name { padding-left: 20px; font-style: italic; }
 .gantt-biz-note {

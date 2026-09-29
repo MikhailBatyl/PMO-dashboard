@@ -149,16 +149,10 @@ function renderGantt(container, items) {
             // 🟢 без факта — полоска пустая (нет видимого нарушения)
           }
 
-          const warnSvg = `<svg class="gantt-warn-icon" width="10" height="10" viewBox="0 0 24 24" fill="none">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="#e53935"/>
-            <line x1="12" y1="9" x2="12" y2="13" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
-            <circle cx="12" cy="17.5" r="1.2" fill="white"/>
-          </svg>`;
-
           html += `
             <td class="gantt-cell-month">
               <div class="gantt-strip ${planCls}"></div>
-              <div class="gantt-strip ${factCls}">${factCls === 'gantt-strip-deviation' ? warnSvg : ''}</div>
+              <div class="gantt-strip ${factCls}"></div>
             </td>
           `;
         });
