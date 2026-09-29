@@ -166,7 +166,15 @@ function renderKPI() {
   document.getElementById('kpi-green-share').textContent  = _shareActive(greenCount);
   document.getElementById('kpi-yellow-share').textContent = _shareActive(yellowCount);
   document.getElementById('kpi-red-share').textContent    = _shareActive(redCount);
-  document.getElementById('kpi-total-share').textContent  = `${projectCount} пр. + ${productCount} прод.`;
+  const _plural = (n, one, few, many) => {
+    const mod10 = n % 10, mod100 = n % 100;
+    if (mod100 >= 11 && mod100 <= 14) return `${n} ${many}`;
+    if (mod10 === 1) return `${n} ${one}`;
+    if (mod10 >= 2 && mod10 <= 4) return `${n} ${few}`;
+    return `${n} ${many}`;
+  };
+  document.getElementById('kpi-total-share').innerHTML =
+    `${_plural(projectCount,'проект','проекта','проектов')}<br>${_plural(productCount,'продукт','продукта','продуктов')}`;
   document.getElementById('kpi-projects-share').textContent = _typeShare(projectCount);
   document.getElementById('kpi-products-share').textContent = _typeShare(productCount);
 
@@ -720,6 +728,13 @@ function renderFunnelBoard(container) {
   const _shActive = (n) => activeTask  ? `${n} из ${activeTask}  (${Math.round(n / activeTask  * 100)}%)` : '';
   const _tsh = (n) => (projCount + prodCount)
     ? `${n} из ${projCount + prodCount} (${Math.round(n / (projCount + prodCount) * 100)}%)` : '';
+  const _plur = (n, one, few, many) => {
+    const m10 = n % 10, m100 = n % 100;
+    if (m100 >= 11 && m100 <= 14) return `${n} ${many}`;
+    if (m10 === 1) return `${n} ${one}`;
+    if (m10 >= 2 && m10 <= 4) return `${n} ${few}`;
+    return `${n} ${many}`;
+  };
 
   container.innerHTML = `
     <div class="kpi-grid">
@@ -738,7 +753,7 @@ function renderFunnelBoard(container) {
       <div class="kpi-card kpi-accent">
         <div class="kpi-label">Всего ценностей</div>
         <div class="kpi-value">${totalTasks}</div>
-        <div class="kpi-share">${projCount} пр. + ${prodCount} прод.</div>
+        <div class="kpi-share">${_plur(projCount,'проект','проекта','проектов')}<br>${_plur(prodCount,'продукт','продукта','продуктов')}</div>
         <div class="kpi-bar"></div>
       </div>
       <div class="kpi-card kpi-done">
