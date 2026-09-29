@@ -305,7 +305,28 @@ function renderPortfolio() {
     return;
   }
 
-  let html = `
+  const legendHtml = `
+    <div class="portfolio-legend">
+      <span class="pl-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="#e53935"/><line x1="12" y1="9" x2="12" y2="13" stroke="white" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="17.5" r="1.2" fill="white"/></svg>
+        Критично
+      </span>
+      <span class="pl-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="#d97706"/><line x1="12" y1="9" x2="12" y2="13" stroke="white" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="17.5" r="1.2" fill="white"/></svg>
+        Контроль
+      </span>
+      <span class="pl-item">
+        <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#64748b"/></svg>
+        В работе
+      </span>
+      <span class="pl-item">
+        <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#16a34a"/><path d="M5 8l2.2 2.2 3.8-3.8" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        Выполнено
+      </span>
+    </div>
+  `;
+
+  let html = legendHtml + `
     <div class="portfolio-table-wrap">
     <table class="portfolio-table">
       <thead>
@@ -361,8 +382,8 @@ function renderPortfolio() {
             <td>${escHtml(task.owner)}</td>
             <td><span class="prio-badge prio-${prioLabel(task.priority)}">${prioLabel(task.priority)}</span></td>
             <td>
-              <span class="status-selector" data-task="${escHtml(task.task)}" data-field="status">
-                ${task.status}
+              <span class="status-selector" data-task="${escHtml(task.task)}" data-field="status" title="${task.status === '🔴' ? 'Критично' : task.status === '🟡' ? 'Контроль' : isTaskDone(task) ? 'Выполнено' : 'В работе'}">
+                ${statusIcon(task.status, isTaskDone(task))}
               </span>
             </td>
             <td>
@@ -650,6 +671,31 @@ function renderRisks() {
   });
   html += `</div>`;
   container.innerHTML = html;
+}
+
+// ─── SVG-иконки статуса ───────────────────────────────────────────────────────
+function statusIcon(status, isDone) {
+  if (status === '🔴')
+    return `<svg class="status-icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="#e53935"/>
+      <line x1="12" y1="9" x2="12" y2="13" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="12" cy="17.5" r="1.2" fill="white"/>
+    </svg>`;
+  if (status === '🟡')
+    return `<svg class="status-icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="#d97706"/>
+      <line x1="12" y1="9" x2="12" y2="13" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="12" cy="17.5" r="1.2" fill="white"/>
+    </svg>`;
+  if (isDone)
+    return `<svg class="status-icon" width="16" height="16" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="7" fill="#16a34a"/>
+      <path d="M5 8l2.2 2.2 3.8-3.8" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>`;
+  // 🟢 В работе
+  return `<svg class="status-icon" width="16" height="16" viewBox="0 0 16 16">
+    <circle cx="8" cy="8" r="7" fill="#64748b"/>
+  </svg>`;
 }
 
 // ─── Вспомогательные функции ──────────────────────────────────────────────────

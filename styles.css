@@ -275,6 +275,43 @@ body {
 }
 .chart-wrapper { height: 180px; }
 
+/* ─── Легенда статусов портфеля ─────────────────────────────────────────── */
+.portfolio-legend {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 6px 2px 10px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  flex-wrap: wrap;
+}
+
+.pl-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+/* SVG-иконка статуса в ячейке таблицы */
+.status-icon {
+  display: block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.status-selector {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 6px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  user-select: none;
+}
+.status-selector:hover { background: var(--color-surface2); transform: scale(1.1); }
+
 /* ─── Таблица портфеля ───────────────────────────────────────────────────── */
 .portfolio-table-wrap {
   border-radius: var(--radius);
@@ -397,7 +434,7 @@ body {
 }
 
 /* Интерактивные поля */
-.status-selector, .trend-selector {
+.trend-selector {
   display: inline-block;
   padding: 3px 6px;
   border-radius: var(--radius);
@@ -406,7 +443,7 @@ body {
   transition: background 0.15s, transform 0.15s;
   user-select: none;
 }
-.status-selector:hover, .trend-selector:hover { background: var(--color-surface2); }
+.trend-selector:hover { background: var(--color-surface2); }
 
 .editable-field {
   display: inline-block;
@@ -723,8 +760,7 @@ td.has-tooltip:hover { background: rgba(26,108,255,0.03); }
 .gantt-focus-clear:hover { background: var(--color-accent); color: #fff; }
 
 /* Статус → переход в гантт */
-.status-selector { transition: transform 0.15s; }
-.status-selector:hover { transform: scale(1.2); background: transparent; }
+.status-selector { transition: transform 0.15s, background 0.15s; }
 
 /* ─── Период запуска: ячейка в таблице ──────────────────────────── */
 .period-cell {
