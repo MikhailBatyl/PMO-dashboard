@@ -635,13 +635,30 @@ body {
   border: 1px solid var(--color-border);
 }
 
-.gantt-strip { height: 16px; width: 100%; }
-.gantt-strip + .gantt-strip { border-top: 1px solid var(--color-border); }
+.gantt-strip {
+  height: 16px;
+  width: calc(100% - 10px);
+  margin: 0 5px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+.gantt-strip + .gantt-strip { margin-top: 0; }
 
 .gantt-strip-plan      { background: rgba(26, 108, 255, 0.25); }
-.gantt-strip-fact      { background: rgba(22, 163, 74,  0.40); } /* зелёный = Выполнено/Факт */
-.gantt-strip-deviation { background: rgba(229, 57, 53,  0.30); } /* красный = Критично + просрочка */
-.gantt-strip-warning   { background: rgba(217, 119,  6,  0.28); } /* жёлтый = Контроль / план без факта */
+.gantt-strip-fact      { background: rgba(22, 163, 74,  0.45); }
+.gantt-strip-deviation { background: rgba(229, 57, 53,  0.22); }
+.gantt-strip-warning   { background: rgba(217, 119,  6,  0.25); }
+
+/* Иконка-треугольник внутри красной полоски */
+.gantt-warn-icon {
+  display: block;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
 
 .gantt-subgroup-name { padding-left: 20px; font-style: italic; }
 .gantt-biz-note {
