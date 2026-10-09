@@ -737,17 +737,9 @@ body {
   border: 1px solid var(--color-border);
 }
 
-/* Текущий месяц — без общего фона, только статусные классы для строк задач */
-.gantt-col-current {
-  /* убрано синее выделение — фон теперь только у статусных ячеек */
-}
-.gantt-col-past {
-  background: #ffffff;
-}
-
-/* Текущий месяц: ячейка задачи по статусу */
-.gantt-col-cur-red    { background: rgba(229, 57, 53,  0.08) !important; }
-.gantt-col-cur-yellow { background: rgba(217, 119,  6, 0.08) !important; }
+/* Ячейки Гантта: фон только для прошлых месяцев, текущий/будущий — белый */
+.gantt-col-past    { background: #ffffff; }
+/* Текущий месяц выделяется только бейджем в шапке (gantt-th-current), не ячейками */
 
 .gantt-strip {
   height: 10px;

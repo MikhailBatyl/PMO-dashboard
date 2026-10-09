@@ -116,51 +116,45 @@ function renderGantt(container, items) {
           let planCls = '';
           let factCls = '';
 
-          if (tl.plan && tl.fact) {
-            // ── Плановый месяц, факт подтверждён ✓ ────────────────────
-            planCls = 'gantt-strip-plan';
-            factCls = 'gantt-strip-fact';
+          if (monthIdx === refPos) {
+            // ── Текущий месяц (период ещё не закончился) ───────────────
+            // Показываем только плановую полоску; если факт уже отмечен — и его.
+            // Предупреждения/отклонения не выводим — время ещё есть.
+            if (tl.plan) planCls = 'gantt-strip-plan';
+            if (tl.fact) factCls = 'gantt-strip-fact';
 
-          } else if (tl.plan && !tl.fact) {
-            // ── Плановый месяц, факта нет ──────────────────────────────
-            planCls = 'gantt-strip-plan';
-            if (monthIdx <= refPos) {
-              // Плановый период уже наступил, а факт не подтверждён →
-              // жёлтая полоска «должно быть в работе»
+          } else if (monthIdx < refPos) {
+            // ── Прошедшие месяцы — полная логика ───────────────────────
+            if (tl.plan && tl.fact) {
+              // План есть, факт подтверждён ✓
+              planCls = 'gantt-strip-plan';
+              factCls = 'gantt-strip-fact';
+
+            } else if (tl.plan && !tl.fact) {
+              // Плановый период прошёл, а факт не подтверждён → предупреждение
+              planCls = 'gantt-strip-plan';
               factCls = 'gantt-strip-warning';
-            }
-            // Будущий плановый месяц — нижняя полоска пустая
 
-          } else if (!tl.plan && tl.fact) {
-            // ── Факт без плана (поздняя поставка) ──────────────────────
-            // Задача выполнена позже срока → всегда красное отклонение
-            factCls = 'gantt-strip-deviation';
+            } else if (!tl.plan && tl.fact) {
+              // Факт без плана → поздняя поставка / красное отклонение
+              factCls = 'gantt-strip-deviation';
 
-          } else if (!taskIsDone && lastPlanPos >= 0
-                     && monthIdx > lastPlanPos && monthIdx <= refPos) {
-            // ── Месяцы ПОСЛЕ последнего планового, которые уже наступили
-            //    → цвет зависит от статуса задачи ───────────────────────
-            if (statusKind(task.status) === 'red') {
-              factCls = 'gantt-strip-deviation'; // красный — Критично
-            } else if (statusKind(task.status) === 'yellow') {
-              factCls = 'gantt-strip-warning';   // жёлтый — Контроль
+            } else if (!taskIsDone && lastPlanPos >= 0 && monthIdx > lastPlanPos) {
+              // Месяцы после последнего планового, задача не выполнена
+              if (statusKind(task.status) === 'red') {
+                factCls = 'gantt-strip-deviation';
+              } else if (statusKind(task.status) === 'yellow') {
+                factCls = 'gantt-strip-warning';
+              }
             }
-            // 🟢 без факта — полоска пустая (нет видимого нарушения)
+
+          } else {
+            // ── Будущие месяцы — только план ───────────────────────────
+            if (tl.plan) planCls = 'gantt-strip-plan';
           }
 
-          // Текущий месяц: фон ячейки по статусу задачи
-          let timeCls = '';
-          if (monthIdx < refPos) {
-            timeCls = 'gantt-col-past';
-          } else if (monthIdx === refPos) {
-            const kind = statusKind(task.status);
-            if (kind === 'red') {
-              timeCls = 'gantt-col-cur-red';
-            } else if (kind === 'yellow') {
-              timeCls = 'gantt-col-cur-yellow';
-            }
-            // 🟢 В работе / ✅ Выполнено — без фона
-          }
+          // Фон ячейки: только прошлые месяцы чуть светлее, текущий/будущий — белый
+          const timeCls = monthIdx < refPos ? 'gantt-col-past' : '';
 
           html += `
             <td class="gantt-cell-month ${timeCls}">
