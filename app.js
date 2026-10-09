@@ -727,7 +727,7 @@ function attachTooltipHandlers(container) {
         ? `<div class="tip-row"><span class="tip-lbl">Описание:</span> ${escHtml(desc)}</div>`
         : '';
       descEl.style.display = desc ? '' : 'none';
-      kpiEl.textContent = kpi ? '📊 КПЭ: ' + kpi : '';
+      kpiEl.textContent = kpi ? 'КПЭ: ' + kpi : '';
       kpiEl.style.display = kpi ? '' : 'none';
       tooltip.classList.remove('hidden');
       positionTooltip(e, tooltip);
@@ -1239,7 +1239,7 @@ function attachCalendarTooltips(container) {
       descEl.style.display = rows.length ? '' : 'none';
 
       const kpiEl = tooltip.querySelector('.tooltip-kpi');
-      kpiEl.textContent = kpi ? '📊 КПЭ: ' + kpi : '';
+      kpiEl.textContent = kpi ? 'КПЭ: ' + kpi : '';
       kpiEl.style.display = kpi ? '' : 'none';
 
       tooltip.classList.remove('hidden');
