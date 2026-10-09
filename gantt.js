@@ -118,10 +118,29 @@ function renderGantt(container, items) {
 
           if (monthIdx === refPos) {
             // ── Текущий месяц (период ещё не закончился) ───────────────
-            // Показываем только плановую полоску; если факт уже отмечен — и его.
-            // Предупреждения/отклонения не выводим — время ещё есть.
-            if (tl.plan) planCls = 'gantt-strip-plan';
-            if (tl.fact) factCls = 'gantt-strip-fact';
+            if (tl.plan && tl.fact) {
+              // Плановый месяц, факт уже подтверждён ✓
+              planCls = 'gantt-strip-plan';
+              factCls = 'gantt-strip-fact';
+
+            } else if (tl.plan && !tl.fact) {
+              // Плановый месяц, факт ещё не отмечен — показываем только план
+              // (период не закончился → предупреждение не выводим)
+              planCls = 'gantt-strip-plan';
+
+            } else if (!tl.plan && tl.fact) {
+              // Факт без плана → поздняя поставка
+              factCls = 'gantt-strip-deviation';
+
+            } else if (!taskIsDone && lastPlanPos >= 0 && monthIdx > lastPlanPos) {
+              // Задача просрочена: план был в прошлых месяцах, не выполнена →
+              // показываем отклонение по статусу (красный/жёлтый)
+              if (statusKind(task.status) === 'red') {
+                factCls = 'gantt-strip-deviation';
+              } else if (statusKind(task.status) === 'yellow') {
+                factCls = 'gantt-strip-warning';
+              }
+            }
 
           } else if (monthIdx < refPos) {
             // ── Прошедшие месяцы — полная логика ───────────────────────
