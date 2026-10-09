@@ -723,9 +723,11 @@ function attachTooltipHandlers(container) {
       tooltip.querySelector('.tooltip-title').textContent = name;
       const descEl = tooltip.querySelector('.tooltip-desc');
       const kpiEl  = tooltip.querySelector('.tooltip-kpi');
-      descEl.textContent = desc || '';
+      descEl.innerHTML = desc
+        ? `<div class="tip-row"><span class="tip-lbl">Описание:</span> ${escHtml(desc)}</div>`
+        : '';
       descEl.style.display = desc ? '' : 'none';
-      kpiEl.textContent = kpi ? 'КПЭ: ' + kpi : '';
+      kpiEl.textContent = kpi ? '📊 КПЭ: ' + kpi : '';
       kpiEl.style.display = kpi ? '' : 'none';
       tooltip.classList.remove('hidden');
       positionTooltip(e, tooltip);
@@ -1177,6 +1179,7 @@ function renderLaunchGrid(container, items) {
             return `<div class="cal-task-line ${barCls}${done ? ' cal-task-done' : ''}"
               data-task="${escHtml(t.task)}"
               data-desc="${escHtml(t.description || '')}"
+              data-kpi="${escHtml(t.kpi || '')}"
               data-owner="${escHtml(t.owner || '')}"
               data-risk="${escHtml(t.risk && t.risk !== '-' ? t.risk : '')}">
               <span class="cal-task-nm">${done ? '<span class="cal-check">✓ </span>' : ''}${escHtml(t.task)}</span>
@@ -1221,6 +1224,7 @@ function attachCalendarTooltips(container) {
     el.addEventListener('mouseenter', e => {
       const name  = el.dataset.task  || '';
       const desc  = el.dataset.desc  || '';
+      const kpi   = el.dataset.kpi   || '';
       const owner = el.dataset.owner || '';
       const risk  = el.dataset.risk  || '';
 
@@ -1228,13 +1232,16 @@ function attachCalendarTooltips(container) {
 
       const descEl = tooltip.querySelector('.tooltip-desc');
       const rows = [];
-      if (desc)  rows.push(`<div class="tip-row"><span class="tip-lbl">КПЭ:</span> ${escHtml(desc)}</div>`);
+      if (desc)  rows.push(`<div class="tip-row"><span class="tip-lbl">Описание:</span> ${escHtml(desc)}</div>`);
       if (owner) rows.push(`<div class="tip-row"><span class="tip-lbl">Отв.:</span> ${escHtml(owner)}</div>`);
       if (risk)  rows.push(`<div class="tip-row tip-risk"><span class="tip-lbl">⚠️ Риск:</span> ${escHtml(risk)}</div>`);
       descEl.innerHTML = rows.join('');
       descEl.style.display = rows.length ? '' : 'none';
 
-      tooltip.querySelector('.tooltip-kpi').style.display = 'none';
+      const kpiEl = tooltip.querySelector('.tooltip-kpi');
+      kpiEl.textContent = kpi ? '📊 КПЭ: ' + kpi : '';
+      kpiEl.style.display = kpi ? '' : 'none';
+
       tooltip.classList.remove('hidden');
       positionTooltip(e, tooltip);
     });

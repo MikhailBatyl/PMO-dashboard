@@ -30,12 +30,15 @@
  * 17  — Dec-26 Факт
  * 18  — Jan-27 План
  * 19  — Jan-27 Факт
- * 20  — Описание ценности (уровень 1: КПЭ/businessNote; уровень 3: tooltip)
+ * 20  — Feb-27 План
+ * 21  — Feb-27 Факт
+ * 22  — Описание ценности (уровень 1: businessNote; уровень 3: tooltip)
+ * 23  — КПЭ / KPI        (уровень 3: tooltip)
  */
 
 var SHEET_NAME = 'Статус проектов и продуктов';
 
-var MONTHS = ['Sep-26', 'Oct-26', 'Nov-26', 'Dec-26', 'Jan-27'];
+var MONTHS = ['Sep-26', 'Oct-26', 'Nov-26', 'Dec-26', 'Jan-27', 'Feb-27'];
 var TIMELINE_START_COL = 10;
 
 // ─── doGet ────────────────────────────────────────────────────────────────────
@@ -103,9 +106,9 @@ function parseSheet(sheet) {
 
     // ── Уровень 1: заголовок проекта/продукта ──────────────────────────────
     if (type === 'Проект' || type === 'Продукт') {
-      var noteVal = String(row[20] || '').trim();
+      var noteVal = String(row[22] || '').trim();
       if (!noteVal) {
-        for (var ci = row.length - 1; ci >= 21; ci--) {
+        for (var ci = row.length - 1; ci >= 24; ci--) {
           var cv = String(row[ci] || '').trim();
           if (cv) { noteVal = cv; break; }
         }
@@ -136,7 +139,8 @@ function parseSheet(sheet) {
         trend:           String(row[7]).trim(),
         risk:            String(row[8]).trim() || '-',
         deviationReason: String(row[9]).trim() || '-',
-        description:     String(row[20] || '').trim(),
+        description:     String(row[22] || '').trim(),
+        kpi:             String(row[23] || '').trim(),
         timeline:        {}
       };
 
