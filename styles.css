@@ -750,9 +750,9 @@ body {
 }
 .gantt-strip + .gantt-strip { margin-top: 3px; }
 
-.gantt-strip-plan        { background: rgba(26,  108, 255, 0.35); }  /* 🟢 В работе — синий */
-.gantt-strip-plan-yellow { background: rgba(217, 119,   6, 0.45); } /* 🟡 Контроль — жёлтый */
-.gantt-strip-plan-red    { background: rgba(229,  57,  53, 0.40); } /* 🔴 Критично — красный */
+.gantt-strip-plan        { background: rgba(26,  108, 255, 0.35); }  /* план — всегда синий */
+.gantt-strip-fact-yellow { background: rgba(217, 119,   6, 0.60); } /* факт 🟡 Контроль */
+.gantt-strip-fact-red    { background: rgba(229,  57,  53, 0.55); } /* факт 🔴 Критично */
 .gantt-strip-fact      { background: rgba(22, 163, 74,  0.50); }
 .gantt-strip-deviation { background: rgba(229, 57, 53,  0.35); }
 .gantt-strip-warning   { background: rgba(217, 119, 6,  0.35); }

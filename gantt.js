@@ -116,31 +116,31 @@ function renderGantt(container, items) {
           let planCls = '';
           let factCls = '';
 
-          // Цвет плановой полоски зависит от статуса задачи
+          // Цвет фактической полоски зависит от статуса задачи
           const kind = statusKind(task.status);
-          const planColor = kind === 'red'    ? 'gantt-strip-plan-red'
-                          : kind === 'yellow' ? 'gantt-strip-plan-yellow'
-                          :                     'gantt-strip-plan';
+          const factColor = kind === 'red'    ? 'gantt-strip-fact-red'
+                          : kind === 'yellow' ? 'gantt-strip-fact-yellow'
+                          :                     'gantt-strip-fact';   // 🟢 → зелёный
 
           if (monthIdx === refPos) {
             // ── Текущий месяц (период ещё не закончился) ───────────────
             if (tl.plan && tl.fact) {
-              // Плановый месяц, факт уже подтверждён ✓
-              planCls = planColor;
-              factCls = 'gantt-strip-fact';
+              // Плановый месяц, факт подтверждён ✓
+              planCls = 'gantt-strip-plan';
+              factCls = factColor;
 
             } else if (tl.plan && !tl.fact) {
-              // Плановый месяц, факт ещё не отмечен — показываем только план
+              // Плановый месяц, факт ещё не отмечен — только план
               // (период не закончился → предупреждение не выводим)
-              planCls = planColor;
+              planCls = 'gantt-strip-plan';
 
             } else if (!tl.plan && tl.fact) {
               // Факт без плана → поздняя поставка
               factCls = 'gantt-strip-deviation';
 
             } else if (!taskIsDone && lastPlanPos >= 0 && monthIdx > lastPlanPos) {
-              // Задача просрочена: план был в прошлых месяцах, не выполнена →
-              // показываем отклонение по статусу (красный/жёлтый)
+              // Задача просрочена: план был в прошлых месяцах →
+              // показываем отклонение по статусу
               if (kind === 'red') {
                 factCls = 'gantt-strip-deviation';
               } else if (kind === 'yellow') {
@@ -152,12 +152,12 @@ function renderGantt(container, items) {
             // ── Прошедшие месяцы — полная логика ───────────────────────
             if (tl.plan && tl.fact) {
               // План есть, факт подтверждён ✓
-              planCls = planColor;
-              factCls = 'gantt-strip-fact';
+              planCls = 'gantt-strip-plan';
+              factCls = factColor;
 
             } else if (tl.plan && !tl.fact) {
-              // Плановый период прошёл, а факт не подтверждён → предупреждение
-              planCls = planColor;
+              // Плановый период прошёл, факт не подтверждён → предупреждение
+              planCls = 'gantt-strip-plan';
               factCls = 'gantt-strip-warning';
 
             } else if (!tl.plan && tl.fact) {
@@ -174,8 +174,8 @@ function renderGantt(container, items) {
             }
 
           } else {
-            // ── Будущие месяцы — только план ───────────────────────────
-            if (tl.plan) planCls = planColor;
+            // ── Будущие месяцы — только план (синий) ───────────────────
+            if (tl.plan) planCls = 'gantt-strip-plan';
           }
 
           // Фон ячейки: только прошлые месяцы чуть светлее, текущий/будущий — белый
