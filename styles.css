@@ -660,12 +660,17 @@ body {
 
 .gantt-task-col {
   text-align: left !important;
-  min-width: 200px;
-  width: 200px;
+  min-width: 220px;
+  width: 220px;
+  max-width: 220px;
   position: sticky;
   left: 0;
   background: var(--color-surface) !important;
   z-index: 2;
+  /* разрешаем перенос строки в колонке задач */
+  white-space: normal !important;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 .gantt-month-col { text-align: center; min-width: 72px; width: 72px; }
 
@@ -686,7 +691,15 @@ body {
 .gantt-overdue td { color: #b71c1c; }
 .gantt-overdue .gantt-owner { color: var(--color-red); }
 .gantt-task-indent { padding-left: 24px !important; }
-.gantt-task-name { min-width: 200px; max-width: 200px; }
+.gantt-task-name {
+  min-width: 220px;
+  max-width: 220px;
+  white-space: normal !important;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  vertical-align: middle;
+}
 
 .gantt-status {
   display: inline-flex;
