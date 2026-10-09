@@ -65,7 +65,7 @@ function renderGantt(container, items) {
           <strong>${escapeHtml(item.name)}</strong>
           ${item.businessNote ? `<span class="gantt-biz-note">${item.businessNote.split(/\.\s+|\n/).filter(Boolean).map((s,i,a) => escapeHtml(s) + (i < a.length-1 ? '.' : '')).join('<br>')}</span>` : ''}
         </td>
-        ${months.map((_, i) => `<td class="gantt-cell-month ${i === refPos ? 'gantt-col-current' : i < refPos ? 'gantt-col-past' : ''}"></td>`).join('')}
+        ${months.map((_, i) => `<td class="gantt-cell-month ${i < refPos ? 'gantt-col-past' : ''}"></td>`).join('')}
       </tr>
     `;
 
@@ -75,7 +75,7 @@ function renderGantt(container, items) {
         html += `
           <tr class="gantt-group-row gantt-level2">
             <td class="gantt-task-name gantt-subgroup-name">— ${escapeHtml(subgroup.subgroupName)}</td>
-            ${months.map((_, i) => `<td class="gantt-cell-month ${i === refPos ? 'gantt-col-current' : i < refPos ? 'gantt-col-past' : ''}"></td>`).join('')}
+            ${months.map((_, i) => `<td class="gantt-cell-month ${i < refPos ? 'gantt-col-past' : ''}"></td>`).join('')}
           </tr>
         `;
       }
@@ -148,8 +148,19 @@ function renderGantt(container, items) {
             // 🟢 без факта — полоска пустая (нет видимого нарушения)
           }
 
-          const timeCls = monthIdx === refPos ? 'gantt-col-current'
-                        : monthIdx < refPos  ? 'gantt-col-past' : '';
+          // Текущий месяц: фон ячейки по статусу задачи
+          let timeCls = '';
+          if (monthIdx < refPos) {
+            timeCls = 'gantt-col-past';
+          } else if (monthIdx === refPos) {
+            const kind = statusKind(task.status);
+            if (kind === 'red') {
+              timeCls = 'gantt-col-cur-red';
+            } else if (kind === 'yellow') {
+              timeCls = 'gantt-col-cur-yellow';
+            }
+            // 🟢 В работе / ✅ Выполнено — без фона
+          }
 
           html += `
             <td class="gantt-cell-month ${timeCls}">
